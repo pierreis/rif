@@ -19,15 +19,9 @@
 
 /**
  * @file
- * @brief Rif all-in-one header.
+ * @brief Rif common includes.
  */
 
 #pragma once
 
-#include "internal/rif_libs.h"
-#include "internal/rif_macros.h"
-
-#include "rif_base.h"
-#include "rif_collection.h"
-#include "rif_common.h"
-#include "rif_util.h"
+#include "common/rif_status.h"

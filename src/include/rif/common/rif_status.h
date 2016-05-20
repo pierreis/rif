@@ -19,15 +19,37 @@
 
 /**
  * @file
- * @brief Rif all-in-one header.
+ * @brief Rif operation status.
  */
 
 #pragma once
 
-#include "internal/rif_libs.h"
-#include "internal/rif_macros.h"
+#include "rif/base/rif_val.h"
+#include "rif/common/rif_status.h"
 
-#include "rif_base.h"
-#include "rif_collection.h"
-#include "rif_common.h"
-#include "rif_util.h"
+/*****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/******************************************************************************
+ * TYPES
+ */
+
+/**
+ * Rif status codes
+ */
+typedef enum rif_status_e {
+  RIF_OK,
+  RIF_ERR_CAPACITY,
+  RIF_ERR_MEMORY,
+  RIF_ERR_OUT_OF_BOUNDS,
+  RIF_ERR_UNSUPPORTED
+} rif_status_t;
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

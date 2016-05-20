@@ -17,17 +17,29 @@
  * License along with this library.
  */
 
-/**
- * @file
- * @brief Rif all-in-one header.
- */
-
 #pragma once
 
-#include "internal/rif_libs.h"
-#include "internal/rif_macros.h"
+#include "rif/rif_internal.h"
 
-#include "rif_base.h"
-#include "rif_collection.h"
-#include "rif_common.h"
-#include "rif_util.h"
+/*****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/******************************************************************************
+ * CALLBACK FUNCTIONS
+ */
+
+/**
+ * @private
+ *
+ * Callback function to destroy a `rif_arraylist_t`.
+ */
+void rif_arraylist_destroy_callback(rif_arraylist_t *al_ptr);
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

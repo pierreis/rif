@@ -18,6 +18,21 @@ set(${PROJECT_NAME}_BASE_OBJECTS
 
 add_library("${PROJECT_NAME}_base" OBJECT ${${PROJECT_NAME}_BASE_OBJECTS})
 
+# Base
+
+set(${PROJECT_NAME}_COLLECTION_OBJECTS
+
+    collection/rif_list.c
+
+    collection/rif_arraylist.c
+    collection/rif_arraylist_hooks.c
+    collection/rif_arraylist_iterator.c
+    collection/rif_arraylist_iterator_hooks.c
+
+)
+
+add_library("${PROJECT_NAME}_collection" OBJECT ${${PROJECT_NAME}_COLLECTION_OBJECTS})
+
 # Util
 
 set(${PROJECT_NAME}_UTIL_OBJECTS
@@ -50,6 +65,7 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fPIC")
 set(RIF_OBJECTS
 
     $<TARGET_OBJECTS:rif_base>
+    $<TARGET_OBJECTS:rif_collection>
     $<TARGET_OBJECTS:rif_util>
 
 )

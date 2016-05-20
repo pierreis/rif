@@ -17,43 +17,35 @@
  * License along with this library.
  */
 
-#pragma once
-
-/*****************************************************************************/
-
-#include "gtest/gtest.h"
-
 #include "rif/rif_internal.h"
 
 /******************************************************************************
- * ALLOC CHECKS
+ * LIFECYCLE FUNCTIONS
  */
 
-class MemoryAwareTest : public testing::Test {
-
-protected:
-
-  void * (*f_malloc)(size_t);
-  void * (*f_realloc)(void *, size_t);
-  void (*f_free)(void *);
-
-public:
-
-  MemoryAwareTest(void) {
-    f_malloc = malloc;
-    f_realloc = realloc;
-    f_free = free;
-  }
-
-};
+rif_list_t * rif_list_init(rif_list_t *list_ptr, const rif_list_hooks_t *hooks, bool free) {
+  rif_val_init(rif_val(list_ptr), RIF_LIST, free);
+  list_ptr->hooks = hooks;
+  return list_ptr;
+}
 
 /******************************************************************************
- * MACROS
+ * CALLBACK FUNCTIONS
  */
 
-#define RIF_EXPECT_TOSTRING(__expected, __func) \
-    { \
-      char *_str = (__func); \
-      EXPECT_STREQ(__expected, _str); \
-      rif_free(_str); \
-    }
+void rif_list_destroy_callback(rif_val_t *val_ptr) {
+  rif_list_t *list_ptr = rif_list_fromval(val_ptr);
+  rif_hook(destroy, 0, list_ptr);
+}
+
+uint32_t rif_list_hashcode_callback(const rif_val_t *val_ptr) {
+  return 0;
+}
+
+bool rif_list_equals_callback(const rif_val_t *val_ptr, const rif_val_t *other_ptr) {
+  return false;
+}
+
+char * rif_list_tostring_callback(const rif_val_t *val_ptr) {
+  return NULL;
+}

@@ -22,4 +22,6 @@
 
 #include "rif/rif.h"
 
+#include "rif/collection/rif_arraylist_internal.h"
+
 #include "rif/util/rif_alloc_internal.h"
