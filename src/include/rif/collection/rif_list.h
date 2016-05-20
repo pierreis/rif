@@ -64,6 +64,8 @@ typedef struct rif_list_t {
   rif_val_t _;
 
   /**
+   * @private
+   *
    * Hooks used by `rif_list_t` functions.
    */
   const rif_list_hooks_t * hooks;
