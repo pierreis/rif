@@ -17,14 +17,22 @@
  * License along with this library.
  */
 
-/**
- * @file
- * @brief Rif collection includes.
+#include "rif/rif_internal.h"
+
+/******************************************************************************
+ * LIFECYCLE FUNCTIONS
  */
 
-#pragma once
+rif_iterator_t * rif_iterator_init(rif_iterator_t *it_ptr, const rif_iterator_hooks_t *hooks, bool free) {
+  it_ptr->hooks = hooks;
+  it_ptr->free = free;
+  return it_ptr;
+}
 
-#include "collection/rif_iterator.h"
-#include "collection/rif_list.h"
-
-#include "collection/rif_arraylist.h"
+void rif_iterator_destroy(rif_iterator_t *it_ptr) {
+  assert(NULL != it_ptr);
+  rif_hook(destroy, 0, it_ptr);
+  if (it_ptr->free) {
+    rif_free(it_ptr);
+  }
+}

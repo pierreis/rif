@@ -28,6 +28,7 @@ set(${PROJECT_NAME}_COLLECTION_OBJECTS
     collection/rif_arraylist_hooks.c
     collection/rif_arraylist_iterator.c
     collection/rif_arraylist_iterator_hooks.c
+    collection/rif_iterator.c
 
 )
 
