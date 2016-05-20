@@ -100,9 +100,9 @@ TEST_F(Int, rif_int_getorelse_should_return_fallback_with_null_ptr) {
 }
 
 TEST_F(Int, rif_int_should_have_meaningful_tostring) {
-  EXPECT_STREQ("0", rif_val_tostring(&int_0));
-  EXPECT_STREQ("1", rif_val_tostring(&int_1));
-  EXPECT_STREQ("1337", rif_val_tostring(&int_1337));
+  RIF_EXPECT_TOSTRING("0", rif_val_tostring(&int_0));
+  RIF_EXPECT_TOSTRING("1", rif_val_tostring(&int_1));
+  RIF_EXPECT_TOSTRING("1337", rif_val_tostring(&int_1337));
 }
 
 TEST_F(Int, rif_int_tostring_should_return_null_on_failing_alloc) {
