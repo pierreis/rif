@@ -31,7 +31,7 @@ TEST(Null, rif_null_should_not_have_increasing_or_decreasing_reference_count) {
 }
 
 TEST(Null, rif_null_should_have_meaningful_tostring) {
-  EXPECT_STREQ("NULL", rif_val_tostring(rif_null));
+  RIF_EXPECT_TOSTRING("NULL", rif_val_tostring(rif_null));
 }
 
 TEST(Null, rif_null_should_have_hashcode) {

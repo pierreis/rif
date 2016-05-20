@@ -25,7 +25,6 @@
 
 static
 bool _rif_alloc_filter_noop(const char * tag) {
-  printf("%s\n", tag);
   return true;
 }
 

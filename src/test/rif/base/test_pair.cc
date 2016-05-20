@@ -114,8 +114,8 @@ TEST_F(Pair, rif_pair_hashcode_should_be_value_dependent) {
 }
 
 TEST_F(Pair, rif_pair_tostring_should_be_maningful) {
-  EXPECT_STREQ("(0, 1)", rif_val_tostring(&pair_0_1));
-  EXPECT_STREQ("(0, [UNDEF])", rif_val_tostring(&pair_0_N));
+  RIF_EXPECT_TOSTRING("(0, 1)", rif_val_tostring(&pair_0_1));
+  RIF_EXPECT_TOSTRING("(0, [UNDEF])", rif_val_tostring(&pair_0_N));
 }
 
 TEST_F(Pair, rif_pair_tostring_should_return_null_on_failing_alloc) {

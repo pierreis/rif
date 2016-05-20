@@ -154,7 +154,7 @@ TEST_F(String, rif_string_new_dup_should_return_null_on_failing_alloc) {
 }
 
 TEST_F(String, rif_string_tostring_should_be_maningful) {
-  EXPECT_STREQ("\"foo\"", rif_val_tostring(&str_foo));
+  RIF_EXPECT_TOSTRING("\"foo\"", rif_val_tostring(&str_foo));
 }
 
 TEST_F(String, rif_string_tostring_should_return_null_with_null_value) {

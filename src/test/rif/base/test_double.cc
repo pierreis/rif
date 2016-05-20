@@ -100,9 +100,9 @@ TEST_F(Double, rif_double_getorelse_should_return_fallback_with_null_ptr) {
 }
 
 TEST_F(Double, rif_double_should_have_meaningful_tostring) {
-  EXPECT_STREQ("0.0", rif_val_tostring(&double_0));
-  EXPECT_STREQ("1.0", rif_val_tostring(&double_1));
-  EXPECT_STREQ("13.37", rif_val_tostring(&double_1337));
+  RIF_EXPECT_TOSTRING("0.0", rif_val_tostring(&double_0));
+  RIF_EXPECT_TOSTRING("1.0", rif_val_tostring(&double_1));
+  RIF_EXPECT_TOSTRING("13.37", rif_val_tostring(&double_1337));
 }
 
 TEST_F(Double, rif_double_tostring_should_return_null_on_failing_alloc) {
