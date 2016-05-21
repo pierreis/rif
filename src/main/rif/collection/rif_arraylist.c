@@ -121,7 +121,7 @@ rif_status_t rif_arraylist_insert(rif_arraylist_t *al_ptr, uint32_t index, rif_v
   if (index > al_ptr->size) {
     return RIF_ERR_OUT_OF_BOUNDS;
   }
-  rif_status_t ensure_capacity_status = rif_arraylist_ensure_capacity(al_ptr, index + 1);
+  rif_status_t ensure_capacity_status = rif_arraylist_ensure_capacity(al_ptr, al_ptr->size + 1);
   if (RIF_OK != ensure_capacity_status) {
     return ensure_capacity_status;
   }
