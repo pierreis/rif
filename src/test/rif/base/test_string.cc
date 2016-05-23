@@ -20,21 +20,21 @@
 #include "../test_internal.h"
 
 /******************************************************************************
- * TEST FIXTURES
+ * TEST HELPERS
  */
 
 static
-bool _alloc_filter_new(const char *tag) {
+bool _alloc_filter_string_new(const char *tag) {
   return 0 != strcmp(tag, "RIF_STRING_NEW");
 }
 
 static
-bool _alloc_filter_new_dup(const char *tag) {
+bool _alloc_filter_string_new_dup(const char *tag) {
   return 0 != strcmp(tag, "RIF_STRING_NEW_DUP");
 }
 
 static
-bool _alloc_filter_tostring(const char *tag) {
+bool _alloc_filter_string_tostring(const char *tag) {
   return 0 != strcmp(tag, "RIF_STRING_TOSTRING");
 }
 
@@ -105,7 +105,7 @@ TEST_F(String, rif_string_new_should_return_an_initialized_string) {
 }
 
 TEST_F(String, rif_string_new_should_return_null_on_failing_alloc) {
-  rif_alloc_set_filter(_alloc_filter_new);
+  rif_alloc_set_filter(_alloc_filter_string_new);
   ASSERT_TRUE(NULL == rif_string_new((char *) _strs[0], false));
   rif_alloc_set_filter(NULL);
 }
@@ -146,9 +146,9 @@ TEST_F(String, rif_string_new_dup_should_return_null_on_null_string) {
 }
 
 TEST_F(String, rif_string_new_dup_should_return_null_on_failing_alloc) {
-  rif_alloc_set_filter(_alloc_filter_new_dup);
+  rif_alloc_set_filter(_alloc_filter_string_new_dup);
   ASSERT_TRUE(NULL == rif_string_new_dup(_strs[0]));
-  rif_alloc_set_filter(_alloc_filter_new);
+  rif_alloc_set_filter(_alloc_filter_string_new);
   ASSERT_TRUE(NULL == rif_string_new_dup(_strs[0]));
   rif_alloc_set_filter(NULL);
 }
@@ -165,7 +165,7 @@ TEST_F(String, rif_string_tostring_should_return_null_with_null_value) {
 }
 
 TEST_F(String, rif_string_tostring_should_return_null_on_failing_alloc) {
-  rif_alloc_set_filter(_alloc_filter_tostring);
+  rif_alloc_set_filter(_alloc_filter_string_tostring);
   EXPECT_TRUE(NULL == rif_val_tostring(&str_foo));
   rif_alloc_set_filter(NULL);
 }
