@@ -17,9 +17,36 @@
  * License along with this library.
  */
 
-#include <inttypes.h>
-#include <stdio.h>
+/**
+ * @file
+ * @brief Rif list iterator type.
+ */
 
-#include "rif/rif.h"
+#pragma once
 
-#include "rif/util/rif_alloc_internal.h"
+#include "rif/collection/rif_arraylist_iterator.h"
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/******************************************************************************
+ * TYPES
+ */
+
+/**
+ * Rif list iterator union.
+ */
+union rif_list_iterator_u {
+
+  rif_arraylist_iterator_t arraylist_iterator;
+
+};
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

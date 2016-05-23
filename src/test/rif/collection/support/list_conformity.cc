@@ -56,6 +56,16 @@ void rif_list_fill(rif_list_t *list_ptr, uint8_t elements) {
 
 #define NUM_ELEMENTS 8
 
+static
+bool _alloc_filter_list_tostring(const char *tag) {
+  return 0 != strcmp(tag, "RIF_LIST_TOSTRING");
+}
+
+static
+bool _alloc_filter_int_tostring(const char *tag) {
+  return 0 != strcmp(tag, "RIF_INT_TOSTRING");
+}
+
 /******************************************************************************
  * TEST DESTROY
  */
@@ -88,6 +98,23 @@ TEST_P(ListConformity, list_size_should_increase_when_elements_are_added) {
     ASSERT_EQ(n, rif_list_size(list_ptr));
     rif_list_append(list_ptr, NULL);
   }
+}
+
+/******************************************************************************
+ * TEST GET
+ */
+
+TEST_P(ListConformity, list_get_should_get_element) {
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
+  for (uint8_t n = 0; n < NUM_ELEMENTS; ++n) {
+    EXPECT_EQ(n, rif_int_get(rif_int_fromval(rif_list_get(list_ptr, n))));
+  }
+}
+
+TEST_P(ListConformity, list_get_should_handle_bounds_gracefully) {
+  EXPECT_EQ(NULL, rif_list_get(list_ptr, 0));
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
+  EXPECT_EQ(NULL, rif_list_get(list_ptr, NUM_ELEMENTS));
 }
 
 /******************************************************************************
@@ -218,4 +245,81 @@ TEST_P(ListConformity, list_remove_should_handle_bounds_gracefully) {
   rif_list_fill(list_ptr, NUM_ELEMENTS);
   EXPECT_EQ(RIF_ERR_OUT_OF_BOUNDS, rif_list_remove(list_ptr, NUM_ELEMENTS));
   EXPECT_EQ(RIF_ERR_OUT_OF_BOUNDS, rif_list_remove(list_ptr, NUM_ELEMENTS + 1));
+}
+
+/******************************************************************************
+ * TEST ITERATOR
+ */
+
+void test_iterator(rif_list_t *list_ptr, rif_iterator_t *it_ptr) {
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
+  uint8_t n = 0;
+  while (rif_iterator_hasnext(it_ptr)) {
+    rif_val_t *val_ptr = rif_iterator_next(it_ptr);
+    EXPECT_EQ(n++, rif_int_get(rif_int_fromval(val_ptr)));
+  }
+  EXPECT_EQ(8, n);
+  EXPECT_EQ(NULL, rif_iterator_next(it_ptr));
+}
+
+TEST_P(ListConformity, list_iterator_new_should_return_an_initialized_iterator) {
+  rif_iterator_t *it_ptr = (rif_iterator_t *) rif_list_iterator_new(list_ptr);
+  test_iterator(list_ptr, it_ptr);
+  rif_iterator_destroy(it_ptr);
+}
+
+TEST_P(ListConformity, list_iterator_init_should_return_an_initialized_iterator) {
+  rif_list_iterator_t it_ptr;
+  rif_list_iterator_init(&it_ptr, list_ptr);
+  test_iterator(list_ptr, (rif_iterator_t *) &it_ptr);
+  rif_iterator_destroy((rif_iterator_t *) &it_ptr);
+}
+
+TEST_P(ListConformity, list_iterator_init_should_return_null_for_null_iterator) {
+  ASSERT_EQ(NULL, rif_list_iterator_init(NULL, list_ptr));
+}
+
+/******************************************************************************
+ * TEST LIST CALLBACKS
+ */
+
+TEST_P(ListConformity, list_tostring_should_return_meaningful_string) {
+  RIF_EXPECT_TOSTRING("[]", rif_val_tostring(list_ptr));
+  rif_list_fill(list_ptr, 4);
+  RIF_EXPECT_TOSTRING("[0, 1, 2, 3]", rif_val_tostring(list_ptr));
+}
+
+TEST_P(ListConformity, list_tostring_should_return_null_on_failing_alloc) {
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
+  rif_alloc_set_filter(_alloc_filter_int_tostring);
+  EXPECT_EQ(NULL, rif_val_tostring(list_ptr));
+  rif_alloc_set_filter(_alloc_filter_list_tostring);
+  EXPECT_EQ(NULL, rif_val_tostring(list_ptr));
+  rif_alloc_set_filter(NULL);
+}
+
+TEST_P(ListConformity, list_hashcode_should_be_value_dependent) {
+  EXPECT_EQ(rif_val_hashcode(list_ptr), rif_val_hashcode(list_ptr));
+  rif_list_t *tmp_list_ptr = GetParam()->init();
+  EXPECT_EQ(rif_val_hashcode(list_ptr), rif_val_hashcode(tmp_list_ptr));
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
+  EXPECT_NE(rif_val_hashcode(list_ptr), rif_val_hashcode(tmp_list_ptr));
+  rif_list_fill(tmp_list_ptr, NUM_ELEMENTS);
+  EXPECT_EQ(rif_val_hashcode(list_ptr), rif_val_hashcode(tmp_list_ptr));
+  GetParam()->destroy(tmp_list_ptr);
+}
+
+TEST_P(ListConformity, list_equals_should_be_value_dependent) {
+  EXPECT_TRUE(rif_val_equals(list_ptr, list_ptr));
+  rif_list_t *tmp_list_ptr = GetParam()->init();
+  EXPECT_TRUE(rif_val_equals(list_ptr, tmp_list_ptr));
+  rif_list_fill(list_ptr, NUM_ELEMENTS - 1);
+  EXPECT_FALSE(rif_val_equals(list_ptr, tmp_list_ptr));
+  rif_list_fill(tmp_list_ptr, NUM_ELEMENTS - 1);
+  EXPECT_TRUE(rif_val_equals(list_ptr, tmp_list_ptr));
+  rif_list_append(tmp_list_ptr, NULL);
+  EXPECT_FALSE(rif_val_equals(list_ptr, tmp_list_ptr));
+  rif_list_append(list_ptr, rif_val(rif_false));
+  EXPECT_FALSE(rif_val_equals(list_ptr, tmp_list_ptr));
+  GetParam()->destroy(tmp_list_ptr);
 }

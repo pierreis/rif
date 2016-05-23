@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "rif/base/rif_val.h"
+#include "rif/collection/rif_iterator.h"
 #include "rif/common/rif_status.h"
 #include "rif/util/rif_hook.h"
 
@@ -36,6 +38,11 @@ extern "C" {
 /******************************************************************************
  * TYPES
  */
+
+/**
+ * Forward list iterator definition
+ */
+typedef union rif_list_iterator_u rif_list_iterator_t;
 
 /**
  * Callback function for `foreach` loops.
@@ -54,7 +61,7 @@ typedef struct rif_list_hooks_s rif_list_hooks_t;
  * The `rif_list_t` interface.
  * All rif list implementations inherit from this structure.
  */
-typedef struct rif_list_t {
+typedef struct rif_list_s {
 
   /**
    * @private
@@ -118,6 +125,18 @@ struct rif_list_hooks_s {
    * @see rif_list_remove
    */
   rif_status_t (*remove)(rif_list_t *list_ptr, uint32_t index);
+
+  /* Iterator hooks */
+
+  /**
+   * @see rif_list_iterator_init
+   */
+  rif_list_iterator_t *(*iterator_init)(rif_list_t *list_ptr, rif_list_iterator_t *it_ptr);
+
+  /**
+   * @see rif_list_iterator_new
+   */
+  rif_list_iterator_t *(*iterator_new)(rif_list_t *list_ptr);
 
 };
 
@@ -279,6 +298,33 @@ rif_status_t rif_list_set(rif_list_t *list_ptr, uint32_t index, rif_val_t *val_p
 RIF_INLINE
 rif_status_t rif_list_remove(rif_list_t *list_ptr, uint32_t index) {
   return rif_hook(remove, RIF_ERR_UNSUPPORTED, list_ptr, index);
+}
+
+/******************************************************************************
+ * ITERATOR FUNCTIONS
+ */
+
+/**
+ * Initializes a heap-allocated list iterator.
+ *
+ * @param it_ptr   the iterator to initialize
+ * @param list_ptr the list to iterate
+ * @return         the initialized list iterator if successful, or `NULL` otherwise.
+ */
+RIF_INLINE
+rif_list_iterator_t * rif_list_iterator_init(rif_list_iterator_t *it_ptr, rif_list_t *list_ptr) {
+  return rif_hook(iterator_init, NULL, list_ptr, it_ptr);
+}
+
+/**
+ * Creates a stack-allocated list iterator.
+ *
+ * @param list_ptr the list to iterate
+ * @return         the initialized list iterator if successful, or `NULL` otherwise.
+ */
+RIF_INLINE
+rif_list_iterator_t * rif_list_iterator_new(rif_list_t *list_ptr) {
+  return rif_hook(iterator_new, NULL, list_ptr);
 }
 
 /******************************************************************************

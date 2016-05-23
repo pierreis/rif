@@ -121,10 +121,25 @@ TEST_F(Arraylist, rif_arraylist_ensure_capacity_should_not_increase_capacity_of_
   EXPECT_EQ(8, rif_arraylist_capacity(&al_empty_fixed));
 }
 
-TEST_F(Arraylist, rif_arraylist_ensure_capacity_should_hadle_failing_realloc) {
+TEST_F(Arraylist, rif_arraylist_ensure_capacity_should_handle_failing_realloc) {
   rif_alloc_set_filter(_alloc_filter_capacity_realloc);
   ASSERT_EQ(RIF_ERR_MEMORY, rif_arraylist_ensure_capacity(&al_empty, 16));
   EXPECT_EQ(8, rif_arraylist_capacity(&al_empty));
+  rif_alloc_set_filter(NULL);
+}
+
+TEST_F(Arraylist, rif_arraylist_insert_should_increase_capacity_if_needed) {
+  for (uint8_t n = 0; n < 128; ++n) {
+    EXPECT_EQ(RIF_OK, rif_arraylist_insert(&al_empty, 0, NULL));
+  }
+}
+
+TEST_F(Arraylist, rif_arraylist_insert_should_handle_failing_realloc) {
+  for (uint8_t n = 0; n < 128; ++n) {
+    EXPECT_EQ(RIF_OK, rif_arraylist_insert(&al_empty, 0, NULL));
+  }
+  rif_alloc_set_filter(_alloc_filter_capacity_realloc);
+  ASSERT_EQ(RIF_ERR_MEMORY, rif_arraylist_insert(&al_empty, 0, NULL));
   rif_alloc_set_filter(NULL);
 }
 

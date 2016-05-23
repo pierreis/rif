@@ -17,29 +17,28 @@
  * License along with this library.
  */
 
-#pragma once
-
 #include "rif/rif_internal.h"
 
-/*****************************************************************************/
+/******************************************************************************
+ * HOOK HELPERS
+ */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+static
+rif_val_t * _rif_arraylist_iterator_hook_next(rif_iterator_t *it_ptr) {
+  return rif_arraylist_iterator_next((rif_arraylist_iterator_t *) it_ptr);
+}
+
+static
+bool _rif_arraylist_iterator_hook_hasnext(rif_iterator_t *it_ptr) {
+  return rif_arraylist_iterator_hasnext((rif_arraylist_iterator_t *) it_ptr);
+}
 
 /******************************************************************************
- * CALLBACK FUNCTIONS
+ * HOOKS
  */
 
-/**
- * @private
- *
- * Callback function to destroy a `rif_arraylist_t`.
- */
-void rif_arraylist_destroy_callback(rif_arraylist_t *al_ptr);
-
-/*****************************************************************************/
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
+const rif_iterator_hooks_t rif_arraylist_iterator_hooks = {
+    .destroy = NULL,
+    .next    = _rif_arraylist_iterator_hook_next,
+    .hasnext = _rif_arraylist_iterator_hook_hasnext
+};

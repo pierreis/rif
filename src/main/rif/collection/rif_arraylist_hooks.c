@@ -63,17 +63,30 @@ rif_status_t _rif_arraylist_hook_remove(rif_list_t *list_ptr, uint32_t index) {
   return rif_arraylist_remove((rif_arraylist_t *) list_ptr, index);
 }
 
+static
+rif_list_iterator_t * _rif_arraylist_hook_iterator_init(rif_list_t *list_ptr, rif_list_iterator_t *it_ptr) {
+  return (rif_list_iterator_t *) rif_arraylist_iterator_init(
+      (rif_arraylist_iterator_t *) it_ptr, (rif_arraylist_t *) list_ptr);
+}
+
+static
+rif_list_iterator_t * _rif_arraylist_hook_iterator_new(rif_list_t *list_ptr) {
+  return (rif_list_iterator_t *) rif_arraylist_iterator_new((rif_arraylist_t *) list_ptr);
+}
+
 /******************************************************************************
  * HOOKS
  */
 
 const rif_list_hooks_t rif_arraylist_hooks = {
-    .destroy = _rif_arraylist_hook_destroy,
-    .size    = _rif_arraylist_hook_size,
-    .get     = _rif_arraylist_hook_get,
-    .insert  = _rif_arraylist_hook_insert,
-    .append  = _rif_arraylist_hook_append,
-    .prepend = _rif_arraylist_hook_prepend,
-    .set     = _rif_arraylist_hook_set,
-    .remove  = _rif_arraylist_hook_remove
+    .destroy       = _rif_arraylist_hook_destroy,
+    .size          = _rif_arraylist_hook_size,
+    .get           = _rif_arraylist_hook_get,
+    .insert        = _rif_arraylist_hook_insert,
+    .append        = _rif_arraylist_hook_append,
+    .prepend       = _rif_arraylist_hook_prepend,
+    .set           = _rif_arraylist_hook_set,
+    .remove        = _rif_arraylist_hook_remove,
+    .iterator_init = _rif_arraylist_hook_iterator_init,
+    .iterator_new  = _rif_arraylist_hook_iterator_new
 };

@@ -123,10 +123,7 @@ extern const rif_list_hooks_t rif_arraylist_hooks;
  * @param capacity     The initial capacity to allocate. If `0`, the storage will be allocated lazily.
  * @param block_size   The block size of the list, i.e. by how much elements the list will be extended when additional
  *                     capacity is needed. If `0`, the list will have a fixed-size of `capacity`.
- *
- * @return
- *   - `NUUK_ARRAYLIST_OK`        if the list has been initialized successfully.
- *   - `NUUK_ARRAYLIST_ERR_ALLOC` if memory couldn't be allocated.
+ * @return             the initialized arraylist if successful, or `NULL` otherwise.
  */
 RIF_API
 rif_arraylist_t * rif_arraylist_init(rif_arraylist_t *al_ptr, uint32_t capacity, uint32_t block_size);
@@ -187,7 +184,7 @@ rif_status_t rif_arraylist_ensure_capacity(rif_arraylist_t *al_ptr, uint32_t cap
  * @return       The number of elements currently in the list.
  */
 RIF_INLINE
-uint32_t rif_arraylist_size(rif_arraylist_t *al_ptr) {
+uint32_t rif_arraylist_size(const rif_arraylist_t *al_ptr) {
   return al_ptr->size;
 }
 
@@ -198,7 +195,7 @@ uint32_t rif_arraylist_size(rif_arraylist_t *al_ptr) {
  * @return       The allocated element capacity of the list.
  */
 RIF_INLINE
-uint32_t rif_arraylist_capacity(rif_arraylist_t *al_ptr) {
+uint32_t rif_arraylist_capacity(const rif_arraylist_t *al_ptr) {
   return al_ptr->capacity;
 }
 
@@ -215,7 +212,7 @@ uint32_t rif_arraylist_capacity(rif_arraylist_t *al_ptr) {
  * @return the element at the specified position in the list if it exists, or `NULL` otherwise.
  */
 RIF_INLINE
-rif_val_t * rif_arraylist_get(rif_arraylist_t *al_ptr, uint32_t index) {
+rif_val_t * rif_arraylist_get(const rif_arraylist_t *al_ptr, uint32_t index) {
   if (index >= al_ptr->size) {
     return NULL;
   }
@@ -307,6 +304,17 @@ rif_status_t rif_arraylist_set(rif_arraylist_t *al_ptr, uint32_t index, rif_val_
  */
 RIF_API
 rif_status_t rif_arraylist_remove(rif_arraylist_t *al_ptr, uint32_t index);
+
+/******************************************************************************
+ * CALLBACK FUNCTIONS
+ */
+
+/**
+ * @private
+ *
+ * Callback function to destroy a `rif_arraylist_t`.
+ */
+void rif_arraylist_destroy_callback(rif_arraylist_t *al_ptr);
 
 /*****************************************************************************/
 

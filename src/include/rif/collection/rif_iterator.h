@@ -99,8 +99,6 @@ struct rif_iterator_hooks_s {
  * @param hooks    the iterator hooks.
  * @param free     whether or not to free the iterator when the reference count reaches 0
  * @return         the initialized iterator, or `NULL` if initialization failed.
- *
- * @relates rif_list_t
  */
 RIF_API
 rif_iterator_t * rif_iterator_init(rif_iterator_t *it_ptr, const rif_iterator_hooks_t *hooks, bool free);
@@ -124,7 +122,7 @@ void rif_iterator_destroy(rif_iterator_t *it_ptr);
  * @return       the next element in the iteration.
  */
 RIF_INLINE
-bool rif_iterator_next(rif_iterator_t *it_ptr) {
+rif_val_t * rif_iterator_next(rif_iterator_t *it_ptr) {
   return rif_hook(next, NULL, it_ptr);
 }
 
