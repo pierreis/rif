@@ -184,3 +184,18 @@ TEST_F(String, rif_string_hashcode_should_be_value_dependent) {
   ASSERT_EQ(rif_val_hashcode(str_tmp2_ptr), rif_val_hashcode(str_tmp2_ptr));
   rif_val_release(str_tmp2_ptr);
 }
+
+TEST_F(String, rif_string_equals_should_be_value_dependent) {
+  EXPECT_TRUE(rif_val_equals(&str_foo, &str_foo));
+  EXPECT_FALSE(rif_val_equals(&str_foo, &str_bar));
+
+  rif_string_t *str_tmp1_ptr;
+  str_tmp1_ptr = rif_string_new_dup(_strs[0]);
+  ASSERT_TRUE(rif_val_equals(str_tmp1_ptr, &str_foo));
+  rif_val_release(str_tmp1_ptr);
+
+  rif_string_t *str_tmp2_ptr;
+  str_tmp2_ptr = rif_string_new(NULL, false);
+  ASSERT_TRUE(rif_val_equals(str_tmp2_ptr, str_tmp2_ptr));
+  rif_val_release(str_tmp2_ptr);
+}
