@@ -20,7 +20,7 @@
 #include "../test_internal.h"
 
 /******************************************************************************
- * TEST FIXTURES
+ * TEST HELPERS
  */
 
 static
@@ -29,7 +29,7 @@ bool _alloc_filter_pair_tostring(const char *tag) {
 }
 
 static
-bool _alloc_filter_int_new(const char *tag) {
+bool _alloc_filter_int_tostring(const char *tag) {
   return 0 != strcmp(tag, "RIF_INT_TOSTRING");
 }
 
@@ -121,7 +121,7 @@ TEST_F(Pair, rif_pair_tostring_should_be_maningful) {
 TEST_F(Pair, rif_pair_tostring_should_return_null_on_failing_alloc) {
   rif_alloc_set_filter(_alloc_filter_pair_tostring);
   EXPECT_TRUE(NULL == rif_val_tostring(&pair_0_1));
-  rif_alloc_set_filter(_alloc_filter_int_new);
+  rif_alloc_set_filter(_alloc_filter_int_tostring);
   EXPECT_TRUE(NULL == rif_val_tostring(&pair_0_1));
   rif_alloc_set_filter(NULL);
 }

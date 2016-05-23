@@ -19,14 +19,37 @@
 
 /**
  * @file
- * @brief Rif collection includes.
+ * @brief Rif operation status.
  */
 
 #pragma once
 
-#include "collection/rif_iterator.h"
-#include "collection/rif_list.h"
-#include "collection/rif_list_iterator.h"
+#include "rif/base/rif_val.h"
+#include "rif/common/rif_status.h"
 
-#include "collection/rif_arraylist.h"
-#include "collection/rif_arraylist_iterator.h"
+/*****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/******************************************************************************
+ * TYPES
+ */
+
+/**
+ * Rif status codes
+ */
+typedef enum rif_status_e {
+  RIF_OK,
+  RIF_ERR_CAPACITY,
+  RIF_ERR_MEMORY,
+  RIF_ERR_OUT_OF_BOUNDS,
+  RIF_ERR_UNSUPPORTED
+} rif_status_t;
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

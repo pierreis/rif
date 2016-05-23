@@ -98,7 +98,10 @@ uint32_t rif_string_hashcode_callback(const rif_val_t *val_ptr) {
 }
 
 bool rif_string_equals_callback(const rif_val_t *val_ptr, const rif_val_t *other_ptr) {
-  return false;
+  rif_string_t *first_ptr = rif_string_fromval(val_ptr);
+  rif_string_t *second_ptr = rif_string_fromval(other_ptr);
+  return (!first_ptr->value && !second_ptr->value) ||
+         (first_ptr->value && second_ptr->value && !strcmp(first_ptr->value, second_ptr->value));
 }
 
 char * rif_string_tostring_callback(const rif_val_t *val_ptr) {

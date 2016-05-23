@@ -19,14 +19,34 @@
 
 /**
  * @file
- * @brief Rif collection includes.
+ * @brief Rif list iterator type.
  */
 
 #pragma once
 
-#include "collection/rif_iterator.h"
-#include "collection/rif_list.h"
-#include "collection/rif_list_iterator.h"
+#include "rif/collection/rif_arraylist_iterator.h"
 
-#include "collection/rif_arraylist.h"
-#include "collection/rif_arraylist_iterator.h"
+/*****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/******************************************************************************
+ * TYPES
+ */
+
+/**
+ * Rif list iterator union.
+ */
+union rif_list_iterator_u {
+
+  rif_arraylist_iterator_t arraylist_iterator;
+
+};
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

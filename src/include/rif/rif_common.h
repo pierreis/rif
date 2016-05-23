@@ -19,14 +19,9 @@
 
 /**
  * @file
- * @brief Rif collection includes.
+ * @brief Rif common includes.
  */
 
 #pragma once
 
-#include "collection/rif_iterator.h"
-#include "collection/rif_list.h"
-#include "collection/rif_list_iterator.h"
-
-#include "collection/rif_arraylist.h"
-#include "collection/rif_arraylist_iterator.h"
+#include "common/rif_status.h"

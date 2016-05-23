@@ -17,43 +17,28 @@
  * License along with this library.
  */
 
-#pragma once
-
-/*****************************************************************************/
-
-#include "gtest/gtest.h"
-
 #include "rif/rif_internal.h"
 
 /******************************************************************************
- * ALLOC CHECKS
+ * HOOK HELPERS
  */
 
-class MemoryAwareTest : public testing::Test {
+static
+rif_val_t * _rif_arraylist_iterator_hook_next(rif_iterator_t *it_ptr) {
+  return rif_arraylist_iterator_next((rif_arraylist_iterator_t *) it_ptr);
+}
 
-protected:
-
-  void * (*f_malloc)(size_t);
-  void * (*f_realloc)(void *, size_t);
-  void (*f_free)(void *);
-
-public:
-
-  MemoryAwareTest(void) {
-    f_malloc = malloc;
-    f_realloc = realloc;
-    f_free = free;
-  }
-
-};
+static
+bool _rif_arraylist_iterator_hook_hasnext(rif_iterator_t *it_ptr) {
+  return rif_arraylist_iterator_hasnext((rif_arraylist_iterator_t *) it_ptr);
+}
 
 /******************************************************************************
- * MACROS
+ * HOOKS
  */
 
-#define RIF_EXPECT_TOSTRING(__expected, __func) \
-    { \
-      char *_str = (__func); \
-      EXPECT_STREQ(__expected, _str); \
-      rif_free(_str); \
-    }
+const rif_iterator_hooks_t rif_arraylist_iterator_hooks = {
+    .destroy = NULL,
+    .next    = _rif_arraylist_iterator_hook_next,
+    .hasnext = _rif_arraylist_iterator_hook_hasnext
+};

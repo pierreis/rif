@@ -20,7 +20,7 @@
 #include "../test_internal.h"
 
 /******************************************************************************
- * TEST FIXTURES
+ * TEST HELPERS
  */
 
 static
