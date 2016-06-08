@@ -29,6 +29,10 @@ set(${PROJECT_NAME}_COLLECTION_OBJECTS
     collection/rif_arraylist_iterator.c
     collection/rif_arraylist_iterator_hooks.c
     collection/rif_iterator.c
+    collection/rif_linkedlist.c
+    collection/rif_linkedlist_hooks.c
+    collection/rif_linkedlist_iterator.c
+    collection/rif_linkedlist_iterator_hooks.c
 
 )
 

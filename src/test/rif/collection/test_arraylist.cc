@@ -19,7 +19,7 @@
 
 #include "../test_internal.h"
 
-#include "support/list_conformity.cc"
+#include "support/list_conformity.hh"
 
 /******************************************************************************
  * TEST FIXTURES

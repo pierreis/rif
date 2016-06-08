@@ -17,34 +17,13 @@
  * License along with this library.
  */
 
+#include "list_conformity.hh"
+
 #include "../../test_internal.h"
 
 /******************************************************************************
  * TEST HELPERS
  */
-
-typedef struct rif_list_conformity_generator_s {
-  rif_list_t *(*init)();
-  void (*destroy)(rif_list_t *);
-} rif_list_conformity_generator_t;
-
-class ListConformity : public ::testing::TestWithParam<rif_list_conformity_generator_s *> {
-
-protected:
-
-  rif_list_t *list_ptr;
-
-private:
-
-  virtual void SetUp() {
-    list_ptr = GetParam()->init();
-  }
-
-  virtual void TearDown() {
-    GetParam()->destroy(list_ptr);
-  }
-
-};
 
 void rif_list_fill(rif_list_t *list_ptr, uint8_t elements) {
   for (uint8_t n = 0; n < elements; ++n) {
@@ -251,27 +230,28 @@ TEST_P(ListConformity, list_remove_should_handle_bounds_gracefully) {
  * TEST ITERATOR
  */
 
-void test_iterator(rif_list_t *list_ptr, rif_iterator_t *it_ptr) {
-  rif_list_fill(list_ptr, NUM_ELEMENTS);
+void test_iterator(rif_list_t *list_ptr, rif_iterator_t *it_ptr, uint8_t num_elements) {
   uint8_t n = 0;
   while (rif_iterator_hasnext(it_ptr)) {
     rif_val_t *val_ptr = rif_iterator_next(it_ptr);
     EXPECT_EQ(n++, rif_int_get(rif_int_fromval(val_ptr)));
   }
-  EXPECT_EQ(8, n);
+  EXPECT_EQ(num_elements, n);
   EXPECT_EQ(NULL, rif_iterator_next(it_ptr));
 }
 
 TEST_P(ListConformity, list_iterator_new_should_return_an_initialized_iterator) {
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
   rif_iterator_t *it_ptr = (rif_iterator_t *) rif_list_iterator_new(list_ptr);
-  test_iterator(list_ptr, it_ptr);
+  test_iterator(list_ptr, it_ptr, NUM_ELEMENTS);
   rif_iterator_destroy(it_ptr);
 }
 
 TEST_P(ListConformity, list_iterator_init_should_return_an_initialized_iterator) {
+  rif_list_fill(list_ptr, NUM_ELEMENTS);
   rif_list_iterator_t it_ptr;
   rif_list_iterator_init(&it_ptr, list_ptr);
-  test_iterator(list_ptr, (rif_iterator_t *) &it_ptr);
+  test_iterator(list_ptr, (rif_iterator_t *) &it_ptr, NUM_ELEMENTS);
   rif_iterator_destroy((rif_iterator_t *) &it_ptr);
 }
 

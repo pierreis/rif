@@ -17,18 +17,33 @@
  * License along with this library.
  */
 
-/**
- * @file
- * @brief Rif collection includes.
- */
-
 #pragma once
 
-#include "collection/rif_iterator.h"
-#include "collection/rif_list.h"
-#include "collection/rif_list_iterator.h"
+#include "../../test_internal.h"
 
-#include "collection/rif_arraylist.h"
-#include "collection/rif_arraylist_iterator.h"
-#include "collection/rif_linkedlist.h"
-#include "collection/rif_linkedlist_iterator.h"
+/******************************************************************************
+ * TEST HELPERS
+ */
+
+typedef struct rif_list_conformity_generator_s {
+  rif_list_t *(*init)();
+  void (*destroy)(rif_list_t *);
+} rif_list_conformity_generator_t;
+
+class ListConformity : public ::testing::TestWithParam<rif_list_conformity_generator_s *> {
+
+protected:
+
+    rif_list_t *list_ptr;
+
+private:
+
+    virtual void SetUp() {
+      list_ptr = GetParam()->init();
+    }
+
+    virtual void TearDown() {
+      GetParam()->destroy(list_ptr);
+    }
+
+};
