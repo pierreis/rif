@@ -47,8 +47,8 @@ rif_linkedlist_node_t * _rif_linkedlist_node_select_atindex_desc(const rif_linke
 static inline
 rif_linkedlist_node_t * _rif_linkedlist_node_select_atindex(const rif_linkedlist_t *ll_ptr, uint32_t index) {
   return index < ll_ptr->size / 2 ?
-         _rif_linkedlist_node_select_atindex_asc(ll_ptr,index) :
-         _rif_linkedlist_node_select_atindex_desc(ll_ptr,index);
+         _rif_linkedlist_node_select_atindex_asc(ll_ptr, index) :
+         _rif_linkedlist_node_select_atindex_desc(ll_ptr, index);
 }
 
 /******************************************************************************

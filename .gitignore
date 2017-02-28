@@ -9,7 +9,8 @@ build
 bin/*
 
 # Ignore IDE
-.idea/*
+.idea/
+cmake-build-debug/
 
 #
 # GENERAL IGNORES
