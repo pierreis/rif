@@ -19,16 +19,21 @@
 
 #include "rif/rif_internal.h"
 
-/*****************************************************************************
- * SIMPLE HASH PRIMITIVES
+/******************************************************************************
+ * LIFECYCLE FUNCTIONS
  */
 
-uint32_t rif_hash_64(uint64_t key) {
-  key = (~key) + (key << 18); /* key = (key << 18) - key - 1; */
-  key = key ^ (key >> 31);
-  key = key * 21; /* key = (key + (key << 2)) + (key << 4); */
-  key = key ^ (key >> 11);
-  key = key + (key << 6);
-  key = key ^ (key >> 22);
-  return (uint32_t) key;
+rif_map_t * rif_map_init(rif_map_t *map_ptr, const rif_map_hooks_t *hooks, bool free) {
+  rif_val_init(rif_val(map_ptr), RIF_MAP, free);
+  map_ptr->hooks = hooks;
+  return map_ptr;
+}
+
+/******************************************************************************
+ * CALLBACK FUNCTIONS
+ */
+
+void rif_map_destroy_callback(rif_val_t *val_ptr) {
+  rif_map_t *map_ptr = rif_map_fromval(val_ptr);
+  rif_hook(destroy, 0, map_ptr);
 }

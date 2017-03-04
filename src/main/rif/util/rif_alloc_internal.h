@@ -106,7 +106,7 @@ void * rif_calloc_helper(size_t count, size_t size, const char *tag) {
   }
 #endif
 
-  void *ptr = rif_malloc(count *size);
+  void *ptr = rif_malloc(count * size);
   if (!ptr) {
     return ptr;
   }
@@ -125,10 +125,7 @@ char * rif_strdup_helper(const char *str, const char *tag) {
   return rv;
 }
 
-RIF_INLINE
-void * rif_alloca(size_t size) {
-  return alloca(size);
-}
+#define rif_alloca(__size) (alloca(__size))
 
 /******************************************************************************
  * ALLOCATOR FILTER

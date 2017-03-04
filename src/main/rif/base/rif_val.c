@@ -117,6 +117,7 @@ static const rif_val_destroy_callback_t _rif_val_destroy_callbacks[RIF_VAL_TYPE_
     [RIF_STRING] = rif_string_destroy_callback,
     //[RIF_PTR]      = rif_ptr_destroy_callback,
     [RIF_LIST]   = rif_list_destroy_callback,
+    [RIF_MAP]    = rif_map_destroy_callback,
     [RIF_PAIR]   = rif_pair_destroy_callback,
     //[RIF_BUFFER]   = rif_buffer_destroy_callback
 };

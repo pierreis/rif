@@ -19,8 +19,6 @@
 
 #include "list_conformity.hh"
 
-#include "../../test_internal.h"
-
 /******************************************************************************
  * TEST HELPERS
  */

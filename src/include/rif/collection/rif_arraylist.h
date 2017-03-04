@@ -85,7 +85,7 @@ typedef struct rif_arraylist_s {
    *
    * Current element array.
    */
-  rif_val_t ** elements;
+  rif_val_t **elements;
 
 } rif_arraylist_t;
 
@@ -99,18 +99,6 @@ typedef struct rif_arraylist_s {
  * Arraylist hooks.
  */
 extern const rif_list_hooks_t rif_arraylist_hooks;
-
-/******************************************************************************
- * MACROS
- */
-
-/**
- * Cast a `rif_val_t` to `rif_arraylist_t`.
- *
- * @param  __val The `rif_val_t`.
- * @return       The casted `rif_arraylist_t`.
- */
-//#define rif_arraylist_fromval(__val_ptr) (rif_val_tosubtype(__val_ptr, RIF_STRING, rif_arraylist_t))
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
@@ -141,7 +129,8 @@ rif_arraylist_t * rif_arraylist_init(rif_arraylist_t *al_ptr, uint32_t capacity,
   rif_arraylist_init((__al_ptr), 0, 0); \
   (__al_ptr)->free_elements = false; \
   (__al_ptr)->capacity = __capacity; \
-  (__al_ptr)->elements = ((rif_val_t **) rif_alloca((__capacity) * sizeof(rif_val_t *)));
+  (__al_ptr)->elements = ((rif_val_t **) rif_alloca((__capacity) * sizeof(rif_val_t *))); \
+  memset((__al_ptr)->elements, 0, (__capacity) * sizeof(rif_val_t *));
 
 /**
  * Releases a `rif_arraylist_t`. If the reference count reaches 0, the value will be freed.
