@@ -89,7 +89,7 @@ extern const rif_iterator_hooks_t rif_arraylist_iterator_hooks;
  * @return       the initialized arraylist iterator if successful, or `NULL` otherwise.
  */
 RIF_API
-rif_arraylist_iterator_t *rif_arraylist_iterator_init(rif_arraylist_iterator_t *it_ptr, const rif_arraylist_t *al_ptr);
+rif_arraylist_iterator_t * rif_arraylist_iterator_init(rif_arraylist_iterator_t *it_ptr, const rif_arraylist_t *al_ptr);
 
 /**
  * Creates a stack-allocated arraylist iterator.
@@ -98,7 +98,7 @@ rif_arraylist_iterator_t *rif_arraylist_iterator_init(rif_arraylist_iterator_t *
  * @return       the initialized arraylist iterator if successful, or `NULL` otherwise.
  */
 RIF_API
-rif_arraylist_iterator_t *rif_arraylist_iterator_new(const rif_arraylist_t *al_ptr);
+rif_arraylist_iterator_t * rif_arraylist_iterator_new(const rif_arraylist_t *al_ptr);
 
 /******************************************************************************
  * ITERATOR FUNCTIONS
@@ -111,7 +111,7 @@ rif_arraylist_iterator_t *rif_arraylist_iterator_new(const rif_arraylist_t *al_p
  * @return       the next element in the iteration.
  */
 RIF_API
-rif_val_t *rif_arraylist_iterator_next(rif_arraylist_iterator_t *it_ptr);
+rif_val_t * rif_arraylist_iterator_next(rif_arraylist_iterator_t *it_ptr);
 
 /**
  * Returns `true` if the iteration has more elements.

@@ -17,28 +17,36 @@
  * License along with this library.
  */
 
-#include "rif/rif_internal.h"
-
-/******************************************************************************
- * HOOK HELPERS
+/**
+ * @file
+ * @brief Rif map iterator type.
  */
 
-static
-rif_val_t * _rif_hashmap_iterator_hook_next(rif_iterator_t *it_ptr) {
-  return rif_hashmap_iterator_next((rif_hashmap_iterator_t *) it_ptr);
-}
+#pragma once
 
-static
-bool _rif_hashmap_iterator_hook_hasnext(rif_iterator_t *it_ptr) {
-  return rif_hashmap_iterator_hasnext((rif_hashmap_iterator_t *) it_ptr);
-}
+#include "rif/collection/rif_hashmap_iterator.h"
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
- * HOOKS
+ * TYPES
  */
 
-const rif_iterator_hooks_t rif_hashmap_iterator_hooks = {
-    .destroy = NULL,
-    .next    = _rif_hashmap_iterator_hook_next,
-    .hasnext = _rif_hashmap_iterator_hook_hasnext
+/**
+ * Rif map iterator union.
+ */
+union rif_map_iterator_u {
+
+  rif_hashmap_iterator_t hashmap_iterator;
+
 };
+
+/*****************************************************************************/
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

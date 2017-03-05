@@ -200,7 +200,7 @@ rif_status_t rif_hashmap_ensure_capacity(rif_hashmap_t *hm_ptr, uint32_t capacit
  * @return       the number of elements currently in the map
  */
 RIF_INLINE
-uint32_t rif_hashmap_size(rif_hashmap_t *hm_ptr) {
+uint32_t rif_hashmap_size(const rif_hashmap_t *hm_ptr) {
   return hm_ptr->size;
 }
 
@@ -215,6 +215,18 @@ uint32_t rif_hashmap_capacity(const rif_hashmap_t *hm_ptr) {
   return hm_ptr->capacity;
 }
 
+/**
+ * @private
+ *
+ * Get the average distance between an element and its ideal position.
+ *
+ * This function is part of the internal API, and may change at any time.
+ *
+ * @param hm_ptr the map
+ * @return       the average distance
+ */
+float rif_hashmap_average_distance(const rif_hashmap_t *hm_ptr);
+
 /******************************************************************************
  * ELEMENT READ FUNCTIONS
  */
@@ -227,7 +239,7 @@ uint32_t rif_hashmap_capacity(const rif_hashmap_t *hm_ptr) {
  * @return        `true` if an element with the specified key exists in the map, or `false` otherwise
  */
 RIF_API
-bool rif_hashmap_exists(rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr);
+bool rif_hashmap_exists(const rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr);
 
 /**
  * Returns the element with the specified key in this map.
@@ -237,7 +249,21 @@ bool rif_hashmap_exists(rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr);
  * @return        the element with the specified key in the map if it exists, or `NULL` otherwise
  */
 RIF_API
-rif_val_t * rif_hashmap_get(rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr);
+rif_val_t * rif_hashmap_get(const rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr);
+
+/**
+ * @private
+ *
+ * Returns the element at a specified index.
+ *
+ * This function is part of the internal API, and may change at any time.
+ *
+ * @param hm_ptr the map
+ * @param index  the index of the element to return
+ * @return       the element at the specified index in the map if it exists, or `NULL` otherwise
+ */
+RIF_API
+rif_hashmap_element_t * rif_hashmap_atindex(const rif_hashmap_t *hm_ptr, uint32_t index);
 
 /******************************************************************************
  * ELEMENT WRITE FUNCTIONS

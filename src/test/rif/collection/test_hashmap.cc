@@ -119,17 +119,18 @@ TEST_F(Hashmap, rif_hashmap_ensure_capacity_should_handle_failing_alloc) {
 }
 
 TEST_F(Hashmap, rif_hashmap_put_should_increase_capacity_if_needed) {
-  for (uint8_t n = 0; n < 128; ++n) {
+  for (uint8_t n = 0; n < 230; ++n) {
     rif_int_t *val = rif_int_new(n);
     EXPECT_EQ(RIF_OK, rif_hashmap_put(&hm_empty, rif_val(val), rif_val(val)));
     rif_val_release(val);
   }
-  EXPECT_TRUE(128 <= rif_hashmap_capacity(&hm_empty));
-  for (uint8_t n = 0; n < 128; ++n) {
+  EXPECT_TRUE(230 <= rif_hashmap_capacity(&hm_empty));
+  for (uint8_t n = 0; n < 230; ++n) {
     rif_int_t *val = rif_int_new(n);
     EXPECT_EQ(n, rif_int_get(rif_int_fromval(rif_hashmap_get(&hm_empty, rif_val(val)))));
     rif_val_release(val);
   }
+  printf("Average distance: %f\n", rif_hashmap_average_distance(&hm_empty));
 }
 
 /******************************************************************************

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "rif/collection/rif_arraylist_iterator.h"
+#include "rif/collection/rif_linkedlist_iterator.h"
 
 /*****************************************************************************/
 
@@ -42,6 +43,7 @@ extern "C" {
 union rif_list_iterator_u {
 
   rif_arraylist_iterator_t arraylist_iterator;
+  rif_linkedlist_iterator_t linkedlist_iterator;
 
 };
 

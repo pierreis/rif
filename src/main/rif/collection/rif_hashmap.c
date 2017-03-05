@@ -143,11 +143,27 @@ rif_status_t rif_hashmap_ensure_capacity(rif_hashmap_t *hm_ptr, uint32_t capacit
 }
 
 /******************************************************************************
+ * INFO FUNCTIONS
+ */
+
+float rif_hashmap_average_distance(const rif_hashmap_t *hm_ptr) {
+  uint32_t acc = 0;
+  for (uint32_t i = 0; i < hm_ptr->capacity; ++i) {
+    rif_hashmap_element_t *cur = rif_hashmap_atindex(hm_ptr, i);
+    if (cur) {
+      acc += slot_distance(hm_ptr->capacity, cur->hash, i);
+      printf("Slot distance: %u\n", slot_distance(hm_ptr->capacity, cur->hash, i));
+    }
+  }
+  return acc / (float) hm_ptr->size;
+}
+
+/******************************************************************************
  * ELEMENT READ FUNCTIONS
  */
 
 static
-rif_hashmap_element_t * _rif_hashmap_locate(rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr) {
+rif_hashmap_element_t * _rif_hashmap_locate(const rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr) {
 
   // Hash the key
   uint32_t hash = _rif_hashmap_hash(key_ptr, (uint64_t) hm_ptr->elements);
@@ -177,13 +193,22 @@ rif_hashmap_element_t * _rif_hashmap_locate(rif_hashmap_t *hm_ptr, const rif_val
 
 }
 
-bool rif_hashmap_exists(rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr) {
+bool rif_hashmap_exists(const rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr) {
   return NULL != _rif_hashmap_locate(hm_ptr, key_ptr);
 }
 
-rif_val_t * rif_hashmap_get(rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr) {
+rif_val_t * rif_hashmap_get(const rif_hashmap_t *hm_ptr, const rif_val_t *key_ptr) {
   rif_hashmap_element_t *elem_ptr = _rif_hashmap_locate(hm_ptr, key_ptr);
   return NULL == elem_ptr ? NULL : elem_ptr->val_ptr;
+}
+
+rif_hashmap_element_t * rif_hashmap_atindex(const rif_hashmap_t *hm_ptr, uint32_t index) {
+  assert(index < rif_hashmap_capacity(hm_ptr));
+  rif_hashmap_element_t *atindex = hm_ptr->elements + index;
+  if (!atindex->hash || is_deleted(atindex->hash)) {
+    return NULL;
+  }
+  return atindex;
 }
 
 /******************************************************************************
