@@ -30,8 +30,6 @@
 
 #define is_deleted(__hash) ((__hash >> 31) != 0)
 
-#define swap(__x, __y) do { typeof(__x) ___TMPSWAP = __x; __x = __y; __y = ___TMPSWAP; } while (0)
-
 static inline
 uint32_t _rif_hashmap_hash(const rif_val_t *val_ptr, uint64_t salt) {
 
@@ -243,9 +241,9 @@ uint32_t _rif_hashmap_put_helper(
         cur->val_ptr = val_ptr;
         return 1;
       }
-      swap(cur->hash, hash);
-      swap(cur->key_ptr, key_ptr);
-      swap(cur->val_ptr, val_ptr);
+      rif_swap(cur->hash, hash);
+      rif_swap(cur->key_ptr, key_ptr);
+      rif_swap(cur->val_ptr, val_ptr);
       dist = cur_dist;
     }
 

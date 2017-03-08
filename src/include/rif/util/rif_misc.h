@@ -19,14 +19,18 @@
 
 /**
  * @file
- * @brief Rif util includes.
+ * @brief Rif misc helpers
  */
 
 #pragma once
 
-#include "util/rif_alloc.h"
-#include "util/rif_hash.h"
-#include "util/rif_hook.h"
-#include "util/rif_math.h"
-#include "util/rif_misc.h"
-#include "util/rif_version.h"
+/******************************************************************************
+ * MACROS
+ */
+
+#define rif_swap(__x, __y) \
+    do { \
+      typeof(__x) ___TMPSWAP = __x; \
+      __x = __y; \
+      __y = ___TMPSWAP; \
+    } while (0)
