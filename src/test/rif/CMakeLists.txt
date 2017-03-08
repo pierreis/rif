@@ -35,8 +35,10 @@ set(${PROJECT_NAME}_TEST_COLLECTION_OBJECTS
     ${RIF_TEST_GENERIC_RUNNER_PATH}
 
     collection/support/list_conformity.cc
+    collection/support/map_conformity.cc
 
     collection/test_arraylist.cc
+    collection/test_hashmap.cc
     collection/test_linkedlist.cc
 
 )

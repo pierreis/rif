@@ -55,6 +55,7 @@ public:
 private:
 
   virtual void SetUp() {
+    MemoryAwareTest::SetUp();
     rif_string_init(&str_foo, (char *) _strs[0], false);
     rif_string_init(&str_bar, (char *) _strs[1], false);
     rif_string_init(&str_moo, (char *) _strs[2], false);
@@ -64,6 +65,7 @@ private:
     rif_string_release(&str_foo);
     rif_string_release(&str_bar);
     rif_string_release(&str_moo);
+    MemoryAwareTest::TearDown();
   }
 
 };

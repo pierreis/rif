@@ -19,8 +19,6 @@
 
 #include "list_conformity.hh"
 
-#include "../../test_internal.h"
-
 /******************************************************************************
  * TEST HELPERS
  */
@@ -257,30 +255,6 @@ TEST_P(ListConformity, list_iterator_init_should_return_an_initialized_iterator)
 
 TEST_P(ListConformity, list_iterator_init_should_return_null_for_null_iterator) {
   ASSERT_EQ(NULL, rif_list_iterator_init(NULL, list_ptr));
-}
-
-TEST_P(ListConformity, list_iterator_hasnext_should_indicate_where_there_are_remaining_elements) {
-  rif_list_iterator_t it_ptr;
-  rif_list_iterator_init(&it_ptr, list_ptr);
-  ASSERT_FALSE(rif_iterator_hasnext((rif_iterator_t *) &it_ptr));
-  rif_iterator_destroy((rif_iterator_t *) &it_ptr);
-  rif_list_fill(list_ptr, NUM_ELEMENTS);
-  rif_list_iterator_init(&it_ptr, list_ptr);
-  for (uint8_t n = 0; n < NUM_ELEMENTS; ++n) {
-    ASSERT_TRUE(rif_iterator_hasnext((rif_iterator_t *) &it_ptr));
-    rif_iterator_next((rif_iterator_t *) &it_ptr);
-  }
-  ASSERT_FALSE(rif_iterator_hasnext((rif_iterator_t *) &it_ptr));
-  rif_iterator_destroy((rif_iterator_t *) &it_ptr);
-}
-
-TEST_P(ListConformity, list_iterator_next_should_return_next_element) {
-  rif_list_fill(list_ptr, NUM_ELEMENTS);
-  rif_list_iterator_t it_ptr;
-  rif_list_iterator_init(&it_ptr, list_ptr);
-  for (uint8_t n = 0; n < NUM_ELEMENTS; ++n) {
-    EXPECT_EQ(n, rif_int_get(rif_int_fromval(rif_iterator_next((rif_iterator_t *) &it_ptr))));
-  }
 }
 
 /******************************************************************************

@@ -51,10 +51,7 @@ uint32_t rif_hash_64(uint64_t key);
  * @param second The second integer value.
  * @return       The mixed value.
  */
-RIF_INLINE
-uint32_t rif_hash_mix_32(uint32_t first, uint32_t second) {
-  return rif_hash_64((uint64_t) first << 32 | second);
-}
+uint32_t rif_hash_mix_32(uint32_t first, uint32_t second);
 
 /*****************************************************************************/
 

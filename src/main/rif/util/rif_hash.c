@@ -17,6 +17,9 @@
  * License along with this library.
  */
 
+#define XXH_PRIVATE_API
+#include "xxhash.h"
+
 #include "rif/rif_internal.h"
 
 /*****************************************************************************
@@ -24,11 +27,10 @@
  */
 
 uint32_t rif_hash_64(uint64_t key) {
-  key = (~key) + (key << 18); /* key = (key << 18) - key - 1; */
-  key = key ^ (key >> 31);
-  key = key * 21; /* key = (key + (key << 2)) + (key << 4); */
-  key = key ^ (key >> 11);
-  key = key + (key << 6);
-  key = key ^ (key >> 22);
-  return (uint32_t) key;
+  return XXH32(&key, sizeof(uint64_t), 0);
+}
+
+uint32_t rif_hash_mix_32(uint32_t first, uint32_t second) {
+  uint64_t comb = (uint64_t) first << 32 | second;
+  return XXH32(&comb, sizeof(uint64_t), 0);
 }

@@ -91,19 +91,23 @@ typedef struct rif_string_s {
  */
 
 /**
- * Allocates a new `rif_string_t`.
+ * Initializes a `rif_string_t` of known length.
  *
- * @param value The string value for the `rif_string_t`.
- * @return      The initialized `rif_string_t`.
+ * @param str_ptr the string value
+ * @param value   the string value for the `rif_string_t`
+ * @param len     the string length
+ * @param free    if `true`, the string will be freed when the `rif_string_t` is destroyed
+ * @return        the initialized string value
  */
 RIF_API
 rif_string_t * rif_string_init_wlen(rif_string_t *str_ptr, char *value, size_t len, bool free);
 
 /**
- * Allocates a new `rif_string_t`.
+ * Initializes a `rif_string_t`.
  *
- * @param value The string value for the `rif_string_t`.
- * @return      The initialized `rif_string_t`.
+ * @param value the string value for the `rif_string_t`
+ * @param free  if `true`, the string will be freed when the `rif_string_t` is destroyed
+ * @return      The initialized `rif_string_t`
  */
 RIF_INLINE
 rif_string_t * rif_string_init(rif_string_t *str_ptr, char *value, bool free) {
@@ -111,7 +115,7 @@ rif_string_t * rif_string_init(rif_string_t *str_ptr, char *value, bool free) {
 }
 
 /**
- * Allocates a new `rif_string_t`.
+ * Allocates and initializes a `rif_string_t` of known length.
  *
  * @param value The string value for the new `rif_string_t`.
  * @return      The corresponding new `rif_string_t`, or `NULL` if memory allocation failed.
@@ -120,7 +124,7 @@ RIF_API
 rif_string_t * rif_string_new_wlen(char *value, size_t len, bool free);
 
 /**
- * Allocates a new `rif_string_t`.
+ * Allocates and initializes a new `rif_string_t`.
  *
  * @param value The string value for the new `rif_string_t`.
  * @return      The corresponding new `rif_string_t`, or `NULL` if memory allocation failed.
@@ -131,7 +135,7 @@ rif_string_t * rif_string_new(char *value, bool free) {
 }
 
 /**
- * Allocates a new `rif_string_t`.
+ * Allocates and initializes a new `rif_string_t`.
  *
  * @param value The string value for the new `rif_string_t`.
  * @return      The corresponding new `rif_string_t`, or `NULL` if memory allocation failed.

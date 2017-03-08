@@ -24,7 +24,7 @@
  */
 
 static
-rif_arraylist_t * rif_arraylist_build(rif_arraylist_t *al_ptr, bool free, uint32_t capacity, uint32_t block_size) {
+rif_arraylist_t * _rif_arraylist_build(rif_arraylist_t *al_ptr, bool free, uint32_t capacity, uint32_t block_size) {
   if (!al_ptr) {
     return al_ptr;
   }
@@ -36,7 +36,7 @@ rif_arraylist_t * rif_arraylist_build(rif_arraylist_t *al_ptr, bool free, uint32
   al_ptr->size = 0;
 
   // Allocate element array if needed.
-  if (RIF_OK != rif_arraylist_ensure_capacity(al_ptr, capacity)) {
+  if (capacity && RIF_OK != rif_arraylist_ensure_capacity(al_ptr, capacity)) {
     return NULL;
   }
 
@@ -44,7 +44,7 @@ rif_arraylist_t * rif_arraylist_build(rif_arraylist_t *al_ptr, bool free, uint32
 }
 
 rif_arraylist_t * rif_arraylist_init(rif_arraylist_t *al_ptr, uint32_t capacity, uint32_t block_size) {
-  return rif_arraylist_build(al_ptr, false, capacity, block_size);
+  return _rif_arraylist_build(al_ptr, false, capacity, block_size);
 }
 
 /******************************************************************************

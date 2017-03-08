@@ -17,38 +17,46 @@
  * License along with this library.
  */
 
-/**
- * @file
- * @brief Rif list iterator type.
- */
-
 #pragma once
 
-#include "rif/collection/rif_arraylist_iterator.h"
-#include "rif/collection/rif_linkedlist_iterator.h"
-
-/*****************************************************************************/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "../../test_internal.h"
 
 /******************************************************************************
- * TYPES
+ * TEST HELPERS
  */
 
-/**
- * Rif list iterator union.
- */
-union rif_list_iterator_u {
+typedef struct rif_map_conformity_generator_s {
+  rif_map_t *(*init)();
+  void (*destroy)(rif_map_t *);
+} rif_map_conformity_generator_t;
 
-  rif_arraylist_iterator_t arraylist_iterator;
-  rif_linkedlist_iterator_t linkedlist_iterator;
+class MapConformity : public ::testing::TestWithParam<rif_map_conformity_generator_s *> {
+
+protected:
+
+  rif_map_t *map_ptr;
+
+  rif_int_t *ints[10];
+  rif_string_t *strs[10];
+
+private:
+
+  virtual void SetUp() {
+    map_ptr = GetParam()->init();
+    char str[2] = "a";
+    for (uint8_t i = 0; i < 10; ++i) {
+      ints[i] = rif_int_new(i);
+      strs[i] = rif_string_new_dup((char *) &str);
+      ++str[0];
+    }
+  }
+
+  virtual void TearDown() {
+    GetParam()->destroy(map_ptr);
+    for (uint8_t i = 0; i < 10; ++i) {
+      rif_val_release(ints[i]);
+      rif_val_release(strs[i]);
+    }
+  }
 
 };
-
-/*****************************************************************************/
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif

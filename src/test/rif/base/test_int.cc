@@ -44,6 +44,7 @@ public:
 private:
 
   virtual void SetUp() {
+    MemoryAwareTest::SetUp();
     rif_int_init(&int_0, 0);
     rif_int_init(&int_1, 1);
     rif_int_init(&int_5, 5);
@@ -55,6 +56,7 @@ private:
     rif_int_release(&int_1);
     rif_int_release(&int_5);
     rif_int_release(&int_1337);
+    MemoryAwareTest::TearDown();
   }
 
 };

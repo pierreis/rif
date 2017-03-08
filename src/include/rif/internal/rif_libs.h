@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <alloca.h>
 #include <assert.h>
 #include <limits.h>
 #include <math.h>

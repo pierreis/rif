@@ -27,8 +27,12 @@
 #include "collection/rif_iterator.h"
 #include "collection/rif_list.h"
 #include "collection/rif_list_iterator.h"
+#include "collection/rif_map.h"
+#include "collection/rif_map_iterator.h"
 
 #include "collection/rif_arraylist.h"
 #include "collection/rif_arraylist_iterator.h"
+#include "collection/rif_hashmap.h"
+#include "collection/rif_hashmap_iterator.h"
 #include "collection/rif_linkedlist.h"
 #include "collection/rif_linkedlist_iterator.h"

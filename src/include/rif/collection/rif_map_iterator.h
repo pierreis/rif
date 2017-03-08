@@ -19,13 +19,12 @@
 
 /**
  * @file
- * @brief Rif list iterator type.
+ * @brief Rif map iterator type.
  */
 
 #pragma once
 
-#include "rif/collection/rif_arraylist_iterator.h"
-#include "rif/collection/rif_linkedlist_iterator.h"
+#include "rif/collection/rif_hashmap_iterator.h"
 
 /*****************************************************************************/
 
@@ -38,12 +37,11 @@ extern "C" {
  */
 
 /**
- * Rif list iterator union.
+ * Rif map iterator union.
  */
-union rif_list_iterator_u {
+union rif_map_iterator_u {
 
-  rif_arraylist_iterator_t arraylist_iterator;
-  rif_linkedlist_iterator_t linkedlist_iterator;
+  rif_hashmap_iterator_t hashmap_iterator;
 
 };
 

@@ -49,6 +49,7 @@ public:
 private:
 
   virtual void SetUp() {
+    MemoryAwareTest::SetUp();
     rif_arraylist_init(&al_empty, 8, 8);
     rif_arraylist_init(&al_empty_fixed, 8, 0);
   }
@@ -56,6 +57,7 @@ private:
   virtual void TearDown() {
     rif_arraylist_release(&al_empty);
     rif_arraylist_release(&al_empty_fixed);
+    MemoryAwareTest::TearDown();
   }
 
 };

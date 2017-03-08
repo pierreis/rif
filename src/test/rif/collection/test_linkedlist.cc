@@ -48,11 +48,13 @@ public:
 private:
 
   virtual void SetUp() {
+    MemoryAwareTest::SetUp();
     rif_linkedlist_init(&ll_empty);
   }
 
   virtual void TearDown() {
     rif_linkedlist_release(&ll_empty);
+    MemoryAwareTest::TearDown();
   }
 
 };

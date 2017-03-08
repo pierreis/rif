@@ -19,12 +19,12 @@
 
 /**
  * @file
- * @brief Rif arraylist iterator.
+ * @brief Rif hashmap iterator.
  */
 
 #pragma once
 
-#include "rif/collection/rif_arraylist.h"
+#include "rif/collection/rif_hashmap.h"
 #include "rif/collection/rif_iterator.h"
 
 /*****************************************************************************/
@@ -38,24 +38,31 @@ extern "C" {
  */
 
 /**
- * The `rif_list_t` interface.
- * All rif list implementations inherit from this structure.
+ * The `rif_map_t` interface.
+ * All rif map implementations inherit from this structure.
  */
-typedef struct rif_arraylist_iterator_s {
+typedef struct rif_hashmap_iterator_s {
 
   /**
    * @private
    *
-   * `rif_arraylist_iterator_t` is a `rif_iterator_t` subtype.
+   * `rif_hashmap_iterator_t` is a `rif_iterator_t` subtype.
    */
   rif_iterator_t _;
 
   /**
    * @private
    *
-   * The list to iterate.
+   * The map to iterate.
    */
-  const rif_arraylist_t *al_ptr;
+  const rif_hashmap_t *hm_ptr;
+
+  /**
+   * @private
+   *
+   * The pair to use.
+   */
+  rif_pair_t *pair_ptr;
 
   /**
    * @private
@@ -64,7 +71,14 @@ typedef struct rif_arraylist_iterator_s {
    */
   uint32_t index;
 
-} rif_arraylist_iterator_t;
+  /**
+   * @private
+   *
+   * How many elements have been returned so far.
+   */
+  uint32_t found;
+
+} rif_hashmap_iterator_t;
 
 /******************************************************************************
  * HOOKS
@@ -73,32 +87,33 @@ typedef struct rif_arraylist_iterator_s {
 /**
  * @private
  *
- * Arraylist iterator hooks.
+ * Arraymap iterator hooks.
  */
-extern const rif_iterator_hooks_t rif_arraylist_iterator_hooks;
+extern const rif_iterator_hooks_t rif_hashmap_iterator_hooks;
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
  */
 
 /**
- * Initializes a heap-allocated arraylist iterator.
+ * Initializes a heap-allocated hashmap iterator.
  *
  * @param it_ptr the iterator to initialize
- * @param al_ptr the arraylist to iterate
- * @return       the initialized arraylist iterator if successful, or `NULL` otherwise.
+ * @param hm_ptr the hashmap to iterate
+ * @return       the initialized hashmap iterator if successful, or `NULL` otherwise.
  */
 RIF_API
-rif_arraylist_iterator_t * rif_arraylist_iterator_init(rif_arraylist_iterator_t *it_ptr, const rif_arraylist_t *al_ptr);
+rif_hashmap_iterator_t * rif_hashmap_iterator_init(
+    rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr, rif_pair_t *pair_ptr);
 
 /**
- * Creates a stack-allocated arraylist iterator.
+ * Creates a stack-allocated hashmap iterator.
  *
- * @param al_ptr the arraylist to iterate
- * @return       the initialized arraylist iterator if successful, or `NULL` otherwise.
+ * @param hm_ptr the hashmap to iterate
+ * @return       the initialized hashmap iterator if successful, or `NULL` otherwise.
  */
 RIF_API
-rif_arraylist_iterator_t * rif_arraylist_iterator_new(const rif_arraylist_t *al_ptr);
+rif_hashmap_iterator_t * rif_hashmap_iterator_new(const rif_hashmap_t *hm_ptr);
 
 /******************************************************************************
  * ITERATOR FUNCTIONS
@@ -111,7 +126,7 @@ rif_arraylist_iterator_t * rif_arraylist_iterator_new(const rif_arraylist_t *al_
  * @return       the next element in the iteration.
  */
 RIF_API
-rif_val_t * rif_arraylist_iterator_next(rif_arraylist_iterator_t *it_ptr);
+rif_val_t * rif_hashmap_iterator_next(rif_hashmap_iterator_t *it_ptr);
 
 /**
  * Returns `true` if the iteration has more elements.
@@ -120,9 +135,20 @@ rif_val_t * rif_arraylist_iterator_next(rif_arraylist_iterator_t *it_ptr);
  * @return       `true` if the iteration has more elements.
  */
 RIF_INLINE
-bool rif_arraylist_iterator_hasnext(rif_arraylist_iterator_t *it_ptr) {
-  return it_ptr->index < rif_arraylist_size(it_ptr->al_ptr);
+bool rif_hashmap_iterator_hasnext(rif_hashmap_iterator_t *it_ptr) {
+  return it_ptr->found < rif_hashmap_size(it_ptr->hm_ptr);
 }
+
+/******************************************************************************
+ * CALLBACK FUNCTIONS
+ */
+
+/**
+ * @private
+ *
+ * Callback function to destroy a `rif_hashmap_iterator_t`.
+ */
+void rif_hashmap_iterator_destroy_callback(rif_hashmap_iterator_t *it_ptr);
 
 /*****************************************************************************/
 

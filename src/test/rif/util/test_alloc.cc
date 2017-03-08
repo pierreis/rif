@@ -60,11 +60,16 @@ void * _test_malloc_calloc(size_t size) {
 
 class Alloc : public MemoryAwareTest {
 
+  virtual void SetUp() {
+    MemoryAwareTest::SetUp();
+  }
+
   virtual void TearDown() {
     rif_set_allocators(f_malloc, f_realloc, f_free);
     _malloc_counter = 0;
     _realloc_counter = 0;
     _free_counter = 0;
+    MemoryAwareTest::TearDown();
   }
 
 };

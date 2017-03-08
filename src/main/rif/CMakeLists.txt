@@ -23,11 +23,18 @@ add_library("${PROJECT_NAME}_base" OBJECT ${${PROJECT_NAME}_BASE_OBJECTS})
 set(${PROJECT_NAME}_COLLECTION_OBJECTS
 
     collection/rif_list.c
+    collection/rif_map.c
 
     collection/rif_arraylist.c
     collection/rif_arraylist_hooks.c
     collection/rif_arraylist_iterator.c
     collection/rif_arraylist_iterator_hooks.c
+
+    collection/rif_hashmap.c
+    collection/rif_hashmap_hooks.c
+    collection/rif_hashmap_iterator.c
+    collection/rif_hashmap_iterator_hooks.c
+
     collection/rif_iterator.c
     collection/rif_linkedlist.c
     collection/rif_linkedlist_hooks.c
