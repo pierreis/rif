@@ -115,11 +115,9 @@ static const rif_val_destroy_callback_t _rif_val_destroy_callbacks[RIF_VAL_TYPE_
     [RIF_INT]    = rif_int_destroy_callback,
     [RIF_DOUBLE] = rif_double_destroy_callback,
     [RIF_STRING] = rif_string_destroy_callback,
-    //[RIF_PTR]      = rif_ptr_destroy_callback,
     [RIF_LIST]   = rif_list_destroy_callback,
     [RIF_MAP]    = rif_map_destroy_callback,
-    [RIF_PAIR]   = rif_pair_destroy_callback,
-    //[RIF_BUFFER]   = rif_buffer_destroy_callback
+    [RIF_PAIR]   = rif_pair_destroy_callback
 };
 
 static const rif_val_hashcode_callback_t _rif_val_hashcode_callbacks[RIF_VAL_TYPE_COUNT] = {
@@ -129,10 +127,9 @@ static const rif_val_hashcode_callback_t _rif_val_hashcode_callbacks[RIF_VAL_TYP
     [RIF_INT]    = rif_int_hashcode_callback,
     [RIF_DOUBLE] = rif_double_hashcode_callback,
     [RIF_STRING] = rif_string_hashcode_callback,
-    //[RIF_PTR]      = rif_ptr_hashcode_callback,
     [RIF_LIST]   = rif_list_hashcode_callback,
-    [RIF_PAIR]   = rif_pair_hashcode_callback,
-    //[RIF_BUFFER]   = rif_buffer_hashcode_callback
+    [RIF_MAP]    =  rif_map_hashcode_callback,
+    [RIF_PAIR]   = rif_pair_hashcode_callback
 };
 
 static const rif_val_equals_callback_t _rif_val_equals_callbacks[RIF_VAL_TYPE_COUNT] = {
@@ -142,10 +139,9 @@ static const rif_val_equals_callback_t _rif_val_equals_callbacks[RIF_VAL_TYPE_CO
     [RIF_INT]    = rif_int_equals_callback,
     [RIF_DOUBLE] = rif_double_equals_callback,
     [RIF_STRING] = rif_string_equals_callback,
-    //[RIF_PTR]      = rif_ptr_equals_callback,
     [RIF_LIST]   = rif_list_equals_callback,
-    [RIF_PAIR]   = rif_pair_equals_callback,
-    //[RIF_BUFFER]   = rif_buffer_equals_callback
+    [RIF_MAP]    =  rif_map_equals_callback,
+    [RIF_PAIR]   = rif_pair_equals_callback
 };
 
 static const rif_val_tostring_callback_t _rif_val_tostring_callbacks[RIF_VAL_TYPE_COUNT] = {
@@ -155,10 +151,9 @@ static const rif_val_tostring_callback_t _rif_val_tostring_callbacks[RIF_VAL_TYP
     [RIF_INT]    = rif_int_tostring_callback,
     [RIF_DOUBLE] = rif_double_tostring_callback,
     [RIF_STRING] = rif_string_tostring_callback,
-    //[RIF_PTR]      = rif_ptr_tostring_callback,
     [RIF_LIST]   = rif_list_tostring_callback,
-    [RIF_PAIR]   = rif_pair_tostring_callback,
-    //[RIF_BUFFER]   = rif_buffer_tostring_callback
+    [RIF_MAP]    = rif_map_tostring_callback,
+    [RIF_PAIR]   = rif_pair_tostring_callback
 };
 
 /******************************************************************************

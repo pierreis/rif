@@ -37,12 +37,28 @@ protected:
   void * (*f_realloc)(void *, size_t);
   void (*f_free)(void *);
 
+  rif_hashmap_t allocator_map;
+
 public:
 
   MemoryAwareTest(void) {
     f_malloc = malloc;
     f_realloc = realloc;
     f_free = free;
+  }
+
+protected:
+
+  virtual void SetUp() {
+    rif_hashmap_init(&allocator_map, 32, false);
+  }
+
+  virtual void TearDown() {
+    rif_hashmap_destroy_callback(&allocator_map);
+  }
+
+  void * MallocCatcher(size_t size) {
+    return f_malloc(size);
   }
 
 };

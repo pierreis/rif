@@ -111,7 +111,7 @@ struct rif_map_hooks_s {
   /**
    * @see rif_map_iterator_init
    */
-  rif_map_iterator_t *(*iterator_init)(rif_map_t *map_ptr, rif_map_iterator_t *it_ptr);
+  rif_map_iterator_t *(*iterator_init)(rif_map_t *map_ptr, rif_map_iterator_t *it_ptr, rif_pair_t *pair_ptr);
 
   /**
    * @see rif_map_iterator_new
@@ -246,8 +246,8 @@ rif_status_t rif_map_remove(rif_map_t *map_ptr, rif_val_t *key_ptr) {
  * @return        the initialized map iterator if successful, or `NULL` otherwise
  */
 RIF_INLINE
-rif_map_iterator_t * rif_map_iterator_init(rif_map_iterator_t *it_ptr, rif_map_t *map_ptr) {
-  return rif_hook(iterator_init, NULL, map_ptr, it_ptr);
+rif_map_iterator_t * rif_map_iterator_init(rif_map_iterator_t *it_ptr, rif_map_t *map_ptr, rif_pair_t *pair_ptr) {
+  return rif_hook(iterator_init, NULL, map_ptr, it_ptr, pair_ptr);
 }
 
 /**

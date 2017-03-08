@@ -42,16 +42,7 @@ extern "C" {
  * @param key The integer value.
  * @return    The value hash.
  */
- RIF_INLINE
-uint32_t rif_hash_64(uint64_t key) {
-  key = (~key) + (key << 18); /* key = (key << 18) - key - 1; */
-  key = key ^ (key >> 31);
-  key = key * 21; /* key = (key + (key << 2)) + (key << 4); */
-  key = key ^ (key >> 11);
-  key = key + (key << 6);
-  key = key ^ (key >> 22);
-  return (uint32_t) key;
-}
+uint32_t rif_hash_64(uint64_t key);
 
 /**
  * Mix two 32-bit integers into one.
@@ -60,10 +51,7 @@ uint32_t rif_hash_64(uint64_t key) {
  * @param second The second integer value.
  * @return       The mixed value.
  */
-RIF_INLINE
-uint32_t rif_hash_mix_32(uint32_t first, uint32_t second) {
-  return rif_hash_64((uint64_t) first << 32 | second);
-}
+uint32_t rif_hash_mix_32(uint32_t first, uint32_t second);
 
 /*****************************************************************************/
 

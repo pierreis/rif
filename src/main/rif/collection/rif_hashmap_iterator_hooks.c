@@ -24,6 +24,11 @@
  */
 
 static
+void _rif_hashmap_iterator_hook_destroy(rif_iterator_t *it_ptr) {
+  return rif_hashmap_iterator_destroy_callback((rif_hashmap_iterator_t *) it_ptr);
+}
+
+static
 rif_val_t * _rif_hashmap_iterator_hook_next(rif_iterator_t *it_ptr) {
   return rif_hashmap_iterator_next((rif_hashmap_iterator_t *) it_ptr);
 }
@@ -38,7 +43,7 @@ bool _rif_hashmap_iterator_hook_hasnext(rif_iterator_t *it_ptr) {
  */
 
 const rif_iterator_hooks_t rif_hashmap_iterator_hooks = {
-    .destroy = NULL,
+    .destroy = _rif_hashmap_iterator_hook_destroy,
     .next    = _rif_hashmap_iterator_hook_next,
     .hasnext = _rif_hashmap_iterator_hook_hasnext
 };

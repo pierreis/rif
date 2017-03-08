@@ -23,9 +23,13 @@
  * HELPERS
  */
 
+#define MIN_CAPACITY 8
+
 #define slot_distance(__capacity, __hash, __index) \
     (rif_mod_pow2((__index + __capacity - rif_mod_pow2(__hash, __capacity)), __capacity))
+
 #define is_deleted(__hash) ((__hash >> 31) != 0)
+
 #define swap(__x, __y) do { typeof(__x) ___TMPSWAP = __x; __x = __y; __y = ___TMPSWAP; } while (0)
 
 static inline
@@ -109,6 +113,7 @@ void _rif_hashmap_remap(rif_hashmap_t *hm_ptr, rif_hashmap_element_t *to, uint32
 rif_status_t rif_hashmap_ensure_capacity(rif_hashmap_t *hm_ptr, uint32_t capacity) {
 
   // Calculate the capacity we need to allocate.
+  capacity = rif_max(MIN_CAPACITY, capacity);
   uint32_t needed_capacity = rif_next_pow2(capacity + capacity / 10);
 
   // Maybe we don't need to do anything.
@@ -140,22 +145,6 @@ rif_status_t rif_hashmap_ensure_capacity(rif_hashmap_t *hm_ptr, uint32_t capacit
   // Done.
   hm_ptr->capacity = needed_capacity;
   return RIF_OK;
-}
-
-/******************************************************************************
- * INFO FUNCTIONS
- */
-
-float rif_hashmap_average_distance(const rif_hashmap_t *hm_ptr) {
-  uint32_t acc = 0;
-  for (uint32_t i = 0; i < hm_ptr->capacity; ++i) {
-    rif_hashmap_element_t *cur = rif_hashmap_atindex(hm_ptr, i);
-    if (cur) {
-      acc += slot_distance(hm_ptr->capacity, cur->hash, i);
-      printf("Slot distance: %u\n", slot_distance(hm_ptr->capacity, cur->hash, i));
-    }
-  }
-  return acc / (float) hm_ptr->size;
 }
 
 /******************************************************************************
@@ -305,5 +294,4 @@ rif_status_t rif_hashmap_remove(rif_hashmap_t *hm_ptr, rif_val_t *key_ptr) {
   --hm_ptr->size;
 
   return RIF_OK;
-
 }

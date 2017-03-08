@@ -53,34 +53,17 @@ rif_status_t _rif_hashmap_hook_remove(rif_map_t *map_ptr, rif_val_t *key_ptr) {
   return rif_hashmap_remove((rif_hashmap_t *) map_ptr, key_ptr);
 }
 
-/*
-
 static
-rif_status_t _rif_hashmap_hook_prepend(rif_map_t *map_ptr, rif_val_t *val_ptr) {
-  return rif_hashmap_prepend((rif_hashmap_t *) map_ptr, val_ptr);
-}
-
-static
-rif_status_t _rif_hashmap_hook_set(rif_map_t *map_ptr, uint32_t index, rif_val_t *val_ptr) {
-  return rif_hashmap_set((rif_hashmap_t *) map_ptr, index, val_ptr);
-}
-
-static
-rif_status_t _rif_hashmap_hook_remove(rif_map_t *map_ptr, uint32_t index) {
-  return rif_hashmap_remove((rif_hashmap_t *) map_ptr, index);
-}
-
-static
-rif_map_iterator_t * _rif_hashmap_hook_iterator_init(rif_map_t *map_ptr, rif_map_iterator_t *it_ptr) {
+rif_map_iterator_t * _rif_hashmap_hook_iterator_init(
+    rif_map_t *map_ptr, rif_map_iterator_t *it_ptr, rif_pair_t *pair_ptr) {
   return (rif_map_iterator_t *) rif_hashmap_iterator_init(
-      (rif_hashmap_iterator_t *) it_ptr, (rif_hashmap_t *) map_ptr);
+      (rif_hashmap_iterator_t *) it_ptr, (rif_hashmap_t *) map_ptr, pair_ptr);
 }
 
 static
 rif_map_iterator_t * _rif_hashmap_hook_iterator_new(rif_map_t *map_ptr) {
   return (rif_map_iterator_t *) rif_hashmap_iterator_new((rif_hashmap_t *) map_ptr);
 }
-*/
 
 /******************************************************************************
  * HOOKS
@@ -92,17 +75,7 @@ const rif_map_hooks_t rif_hashmap_hooks = {
     .exists        = _rif_hashmap_hook_exists,
     .get           = _rif_hashmap_hook_get,
     .put           = _rif_hashmap_hook_put,
-    .remove        = _rif_hashmap_hook_remove
-
-    /*
-    .size          = _rif_hashmap_hook_size,
-    .get           = _rif_hashmap_hook_get,
-    .insert        = _rif_hashmap_hook_insert,
-    .append        = _rif_hashmap_hook_append,
-    .prepend       = _rif_hashmap_hook_prepend,
-    .set           = _rif_hashmap_hook_set,
     .remove        = _rif_hashmap_hook_remove,
     .iterator_init = _rif_hashmap_hook_iterator_init,
     .iterator_new  = _rif_hashmap_hook_iterator_new
-     */
 };

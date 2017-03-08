@@ -20,28 +20,43 @@
 #include "rif/rif_internal.h"
 
 /******************************************************************************
+ * TYPES
+ */
+
+typedef struct rif_hashmap_iterator_heap_s {
+
+  rif_hashmap_iterator_t it;
+  rif_pair_t pair;
+
+} rif_hashmap_iterator_heap_t;
+
+/******************************************************************************
  * LIFECYCLE FUNCTIONS
  */
 
 static
-rif_hashmap_iterator_t *_rif_hashmap_iterator_build(
-    rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr, bool free) {
+rif_hashmap_iterator_t * _rif_hashmap_iterator_build(
+    rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr, rif_pair_t *pair_ptr, bool free) {
   if (!it_ptr) {
     return NULL;
   }
   rif_iterator_init((rif_iterator_t *) it_ptr, &rif_hashmap_iterator_hooks, free);
   it_ptr->hm_ptr = hm_ptr;
   it_ptr->index = 0;
+  it_ptr->found = 0;
+  it_ptr->pair_ptr = rif_pair_init(pair_ptr, NULL, NULL);
   return it_ptr;
 }
 
-rif_hashmap_iterator_t *rif_hashmap_iterator_init(rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr) {
-  return _rif_hashmap_iterator_build(it_ptr, hm_ptr, false);
+rif_hashmap_iterator_t *rif_hashmap_iterator_init(
+    rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr, rif_pair_t *pair_ptr) {
+  return _rif_hashmap_iterator_build(it_ptr, hm_ptr, pair_ptr, false);
 }
 
 rif_hashmap_iterator_t *rif_hashmap_iterator_new(const rif_hashmap_t *hm_ptr) {
-  rif_hashmap_iterator_t *it_ptr = rif_malloc(sizeof(rif_hashmap_iterator_t), "RIF_HASHMAP_ITERATOR_NEW");
-  return _rif_hashmap_iterator_build(it_ptr, hm_ptr, true);
+  rif_hashmap_iterator_heap_t *it_heap_ptr =
+      rif_malloc(sizeof(rif_hashmap_iterator_heap_t), "RIF_HASHMAP_ITERATOR_NEW");
+  return _rif_hashmap_iterator_build(&it_heap_ptr->it, hm_ptr, &it_heap_ptr->pair, true);
 }
 
 /******************************************************************************
@@ -56,7 +71,20 @@ rif_val_t * rif_hashmap_iterator_next(rif_hashmap_iterator_t *it_ptr) {
   do {
     cur = rif_hashmap_atindex(it_ptr->hm_ptr, it_ptr->index++);
   } while(!cur);
-  return cur->val_ptr;
+  it_ptr->pair_ptr->val_ptr_1 = cur->val_ptr;
+  it_ptr->pair_ptr->val_ptr_2 = cur->key_ptr;
+  ++it_ptr->found;
+  return rif_val(it_ptr->pair_ptr);
+}
+
+/******************************************************************************
+ * CALLBACK FUNCTIONS
+ */
+
+void rif_hashmap_iterator_destroy_callback(rif_hashmap_iterator_t *it_ptr) {
+  it_ptr->pair_ptr->val_ptr_1 = NULL;
+  it_ptr->pair_ptr->val_ptr_2 = NULL;
+  rif_val_release(it_ptr->pair_ptr);
 }
 
 /*****************************************************************************/

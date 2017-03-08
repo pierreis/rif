@@ -215,18 +215,6 @@ uint32_t rif_hashmap_capacity(const rif_hashmap_t *hm_ptr) {
   return hm_ptr->capacity;
 }
 
-/**
- * @private
- *
- * Get the average distance between an element and its ideal position.
- *
- * This function is part of the internal API, and may change at any time.
- *
- * @param hm_ptr the map
- * @return       the average distance
- */
-float rif_hashmap_average_distance(const rif_hashmap_t *hm_ptr);
-
 /******************************************************************************
  * ELEMENT READ FUNCTIONS
  */

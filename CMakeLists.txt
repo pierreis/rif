@@ -117,6 +117,12 @@ add_library(tinycthread STATIC "${PROJECT_LIB_DIR}/tinycthread/source/tinycthrea
 link_libraries(tinycthread ${CMAKE_THREAD_LIBS_INIT})
 
 #
+# Handle xxhash.
+#
+
+include_directories("${PROJECT_LIB_DIR}/xxhash/")
+
+#
 # Handle testing.
 #
 

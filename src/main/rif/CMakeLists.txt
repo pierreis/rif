@@ -50,6 +50,7 @@ add_library("${PROJECT_NAME}_collection" OBJECT ${${PROJECT_NAME}_COLLECTION_OBJ
 set(${PROJECT_NAME}_UTIL_OBJECTS
 
     util/rif_alloc.c
+    util/rif_hash.c
     util/rif_version.c
 
 )

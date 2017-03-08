@@ -17,22 +17,20 @@
  * License along with this library.
  */
 
-/**
- * @file
- * @brief Rif collection includes.
+#define XXH_PRIVATE_API
+#include "xxhash.h"
+
+#include "rif/rif_internal.h"
+
+/*****************************************************************************
+ * SIMPLE HASH PRIMITIVES
  */
 
-#pragma once
+uint32_t rif_hash_64(uint64_t key) {
+  return XXH32(&key, sizeof(uint64_t), 0);
+}
 
-#include "collection/rif_iterator.h"
-#include "collection/rif_list.h"
-#include "collection/rif_list_iterator.h"
-#include "collection/rif_map.h"
-#include "collection/rif_map_iterator.h"
-
-#include "collection/rif_arraylist.h"
-#include "collection/rif_arraylist_iterator.h"
-#include "collection/rif_hashmap.h"
-#include "collection/rif_hashmap_iterator.h"
-#include "collection/rif_linkedlist.h"
-#include "collection/rif_linkedlist_iterator.h"
+uint32_t rif_hash_mix_32(uint32_t first, uint32_t second) {
+  uint64_t comb = (uint64_t) first << 32 | second;
+  return XXH32(&comb, sizeof(uint64_t), 0);
+}

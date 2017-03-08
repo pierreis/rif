@@ -75,6 +75,8 @@ bool rif_list_equals_callback(const rif_val_t *val_ptr, const rif_val_t *other_p
       return false;
     }
   }
+  rif_val_release(&first_it);
+  rif_val_release(&second_it);
   return rif_iterator_hasnext(first_it_ptr) == rif_iterator_hasnext(second_it_ptr);
 }
 
@@ -94,7 +96,7 @@ char * rif_list_tostring_callback(const rif_val_t *val_ptr) {
       goto CLEANUP_EXIT;
     }
     element_tostring[i].len = (uint32_t) strlen(element_tostring[i].str);
-    tostring_str_len += strlen(element_tostring[i].str) + 2;
+    tostring_str_len += element_tostring[i].len + 2;
   }
 
   // Create new string.

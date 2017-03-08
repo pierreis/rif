@@ -60,6 +60,13 @@ typedef struct rif_hashmap_iterator_s {
   /**
    * @private
    *
+   * The pair to use.
+   */
+  rif_pair_t *pair_ptr;
+
+  /**
+   * @private
+   *
    * The current index.
    */
   uint32_t index;
@@ -96,7 +103,8 @@ extern const rif_iterator_hooks_t rif_hashmap_iterator_hooks;
  * @return       the initialized hashmap iterator if successful, or `NULL` otherwise.
  */
 RIF_API
-rif_hashmap_iterator_t * rif_hashmap_iterator_init(rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr);
+rif_hashmap_iterator_t * rif_hashmap_iterator_init(
+    rif_hashmap_iterator_t *it_ptr, const rif_hashmap_t *hm_ptr, rif_pair_t *pair_ptr);
 
 /**
  * Creates a stack-allocated hashmap iterator.
@@ -130,6 +138,17 @@ RIF_INLINE
 bool rif_hashmap_iterator_hasnext(rif_hashmap_iterator_t *it_ptr) {
   return it_ptr->found < rif_hashmap_size(it_ptr->hm_ptr);
 }
+
+/******************************************************************************
+ * CALLBACK FUNCTIONS
+ */
+
+/**
+ * @private
+ *
+ * Callback function to destroy a `rif_hashmap_iterator_t`.
+ */
+void rif_hashmap_iterator_destroy_callback(rif_hashmap_iterator_t *it_ptr);
 
 /*****************************************************************************/
 

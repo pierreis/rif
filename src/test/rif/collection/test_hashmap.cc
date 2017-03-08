@@ -44,6 +44,7 @@ public:
 private:
 
   virtual void SetUp() {
+    MemoryAwareTest::SetUp();
     rif_hashmap_init(&hm_empty, 8, false);
     rif_hashmap_init(&hm_empty_fixed, 8, true);
   }
@@ -51,6 +52,7 @@ private:
   virtual void TearDown() {
     rif_hashmap_release(&hm_empty);
     rif_hashmap_release(&hm_empty_fixed);
+    MemoryAwareTest::TearDown();
   }
 
 };
@@ -64,24 +66,25 @@ TEST_F(Hashmap, rif_hashmap_init_should_return_null_with_null_ptr) {
 }
 
 TEST_F(Hashmap, rif_hashmap_init_should_return_an_initialized_hashmap) {
-  rif_hashmap_t hm_ptr;
-  ASSERT_TRUE(NULL != rif_hashmap_init(&hm_ptr, 8, true));
-  EXPECT_EQ(hm_ptr.capacity, 8);
-  rif_hashmap_release(&hm_ptr);
+  rif_hashmap_t hm;
+  ASSERT_TRUE(NULL != rif_hashmap_init(&hm, 8, true));
+  EXPECT_EQ(hm.capacity, 8);
+  rif_hashmap_release(&hm);
 }
 
-TEST_F(Hashmap, rif_hashmap_init_should_not_allocate_memory_with_null_capacity) {
-  rif_hashmap_t al;
-  ASSERT_TRUE(NULL != rif_hashmap_init(&al, 0, true));
-  EXPECT_EQ(NULL, al.elements);
-  EXPECT_EQ(0, al.capacity);
-  rif_hashmap_release(&al);
+TEST_F(Hashmap, rif_hashmap_init_should_not_allocate_memory_with_zero_capacity) {
+  rif_hashmap_t hm;
+  ASSERT_TRUE(NULL != rif_hashmap_init(&hm, 0, true));
+  EXPECT_EQ(NULL, hm.elements);
+  EXPECT_EQ(NULL, rif_hashmap_get(&hm, rif_val(rif_null)));
+  EXPECT_EQ(0, hm.capacity);
+  rif_hashmap_release(&hm);
 }
 
 TEST_F(Hashmap, rif_hashmap_init_should_return_null_on_failing_alloc) {
   rif_alloc_set_filter(_alloc_filter_capacity_alloc);
-  rif_hashmap_t al;
-  ASSERT_TRUE(NULL == rif_hashmap_init(&al, 8, true));
+  rif_hashmap_t hm;
+  ASSERT_TRUE(NULL == rif_hashmap_init(&hm, 8, true));
   rif_alloc_set_filter(NULL);
 }
 
@@ -119,18 +122,45 @@ TEST_F(Hashmap, rif_hashmap_ensure_capacity_should_handle_failing_alloc) {
 }
 
 TEST_F(Hashmap, rif_hashmap_put_should_increase_capacity_if_needed) {
-  for (uint8_t n = 0; n < 230; ++n) {
+  for (uint8_t n = 0; n < 128; ++n) {
     rif_int_t *val = rif_int_new(n);
     EXPECT_EQ(RIF_OK, rif_hashmap_put(&hm_empty, rif_val(val), rif_val(val)));
     rif_val_release(val);
   }
   EXPECT_TRUE(230 <= rif_hashmap_capacity(&hm_empty));
-  for (uint8_t n = 0; n < 230; ++n) {
+  for (uint8_t n = 0; n < 128; ++n) {
     rif_int_t *val = rif_int_new(n);
     EXPECT_EQ(n, rif_int_get(rif_int_fromval(rif_hashmap_get(&hm_empty, rif_val(val)))));
     rif_val_release(val);
   }
-  printf("Average distance: %f\n", rif_hashmap_average_distance(&hm_empty));
+}
+
+TEST_F(Hashmap, rif_hashmap_put_should_handle_insufficient_capacity) {
+  for (uint8_t n = 0; n < 8; ++n) {
+    rif_int_t *val = rif_int_new(n);
+    EXPECT_EQ(RIF_OK, rif_hashmap_put(&hm_empty_fixed, rif_val(val), rif_val(val)));
+    rif_val_release(val);
+  }
+  EXPECT_EQ(RIF_ERR_CAPACITY, rif_hashmap_put(&hm_empty_fixed, rif_val(rif_true), rif_val(rif_null)));
+}
+
+/******************************************************************************
+ * REMOVE
+ */
+
+TEST_F(Hashmap, rif_hashmap_put_should_replace_deleted_elements) {
+  for (uint8_t n = 0; n < 8; ++n) {
+    rif_int_t *val = rif_int_new(n);
+    EXPECT_EQ(RIF_OK, rif_hashmap_put(&hm_empty_fixed, rif_val(val), rif_val(val)));
+    EXPECT_EQ(RIF_OK, rif_hashmap_remove(&hm_empty_fixed, rif_val(val)));
+    rif_val_release(val);
+  }
+  for (uint8_t n = 5; n < 13; ++n) {
+    rif_int_t *val = rif_int_new(n);
+    EXPECT_EQ(RIF_OK, rif_hashmap_put(&hm_empty_fixed, rif_val(val), rif_val(val)));
+    EXPECT_EQ(n, rif_int_get(rif_int_fromval(rif_hashmap_get(&hm_empty_fixed, rif_val(val)))));
+    rif_val_release(val);
+  }
 }
 
 /******************************************************************************
@@ -154,4 +184,4 @@ static rif_map_conformity_generator_t rif_hashmap_generator = {
     .destroy = _rif_hashmap_destroy
 };
 
-INSTANTIATE_TEST_CASE_P(Arraylist, MapConformity, ::testing::Values(&rif_hashmap_generator));
+INSTANTIATE_TEST_CASE_P(Hashmap, MapConformity, ::testing::Values(&rif_hashmap_generator));
