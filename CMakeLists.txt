@@ -126,7 +126,7 @@ include_directories("${PROJECT_LIB_DIR}/xxhash/")
 # Handle testing.
 #
 
-option(BUILD_TESTS "Whether or not to build the tests" ON)
+option(BUILD_TESTS "Whether or not to build the tests" OFF)
 if(BUILD_TESTS)
   if (APPLE)
     add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
