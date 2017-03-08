@@ -100,8 +100,9 @@ rif_status_t rif_arraylist_ensure_capacity(rif_arraylist_t *al_ptr, uint32_t cap
  */
 
 void rif_arraylist_destroy_callback(rif_arraylist_t *al_ptr) {
-  for (uint32_t index = 0; index < al_ptr->size; ++index) {
-    rif_val_t **elem_ptr = al_ptr->elements + index;
+  uint32_t i = 0;
+  for (; i < al_ptr->size; ++i) {
+    rif_val_t **elem_ptr = al_ptr->elements + i;
     if (NULL != *elem_ptr) {
       rif_val_release(*elem_ptr);
     }

@@ -79,7 +79,8 @@ rif_hashmap_t * rif_hashmap_init(rif_hashmap_t *hm_ptr, uint32_t capacity, bool 
 }
 
 void rif_hashmap_destroy_callback(rif_hashmap_t *hm_ptr) {
-  for (uint32_t pos = 0; pos < hm_ptr->capacity; ++pos) {
+  uint32_t pos = 0;
+  for (; pos < hm_ptr->capacity; ++pos) {
     rif_hashmap_element_t *cur = hm_ptr->elements + pos;
     if (cur->hash && !is_deleted(cur->hash)) {
       rif_val_release(cur->key_ptr);
@@ -102,7 +103,8 @@ uint32_t _rif_hashmap_put_helper(
 
 static inline
 void _rif_hashmap_remap(rif_hashmap_t *hm_ptr, rif_hashmap_element_t *to, uint32_t to_capacity) {
-  for (uint32_t pos = 0; pos < hm_ptr->capacity; ++pos) {
+  uint32_t pos = 0;
+  for (; pos < hm_ptr->capacity; ++pos) {
     rif_hashmap_element_t *cur = hm_ptr->elements + pos;
     if (cur->hash && !is_deleted(cur->hash)) {
       _rif_hashmap_put_helper(to, to_capacity, cur->key_ptr, cur->val_ptr);

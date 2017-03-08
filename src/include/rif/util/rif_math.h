@@ -77,7 +77,8 @@
     __typeof__((v)) v_copy = v; \
     --v_copy; \
     __typeof__((v)) bit_limit = sizeof(__typeof__((v))) * CHAR_BIT; \
-    for (__typeof__((v)) i = 1; i < bit_limit; i *= 2) { \
+    __typeof__((v)) i = 1; \
+    for (; i < bit_limit; i *= 2) { \
       v_copy |= v_copy >> i; \
     } \
     ++v_copy; \

@@ -87,8 +87,8 @@ char * rif_list_tostring_callback(const rif_val_t *val_ptr) {
   uint32_t list_size = rif_list_size(list_ptr);
   char *tostring_str = NULL;
   struct rif_list_tostring_s element_tostring[list_size];
-  uint32_t i = 0;
   uint32_t tostring_str_len = 0;
+  uint32_t i = 0;
   for (; i < list_size; ++i) {
     rif_val_t *element_ptr = rif_list_get(list_ptr, i);
     element_tostring[i].str = element_ptr ? rif_val_tostring(element_ptr) : (char *) rif_undef_str;
@@ -107,17 +107,19 @@ char * rif_list_tostring_callback(const rif_val_t *val_ptr) {
   }
   uint32_t pos = 1;
   strcpy(tostring_str, "[");
-  for (uint32_t j = 0; j < list_size; ++j) {
+  uint32_t j = 0;
+  for (; j < list_size; ++j) {
     strcpy(tostring_str + pos, element_tostring[j].str);
     strncpy(tostring_str + pos + element_tostring[j].len, ", ", 2); // Do not copy the terminating NULL character.
     pos += element_tostring[j].len + 2;
   }
   strcpy(tostring_str + pos - (pos == 1 ? 0 : 2), "]");
 
-  CLEANUP_EXIT:
+  CLEANUP_EXIT:;
 
   // Free underlying string representations.
-  for (uint32_t k = 0; k < i; ++k) {
+  uint32_t k = 0;
+  for (; k < i; ++k) {
     if (element_tostring[k].str != rif_undef_str) {
       rif_free(element_tostring[k].str);
     }

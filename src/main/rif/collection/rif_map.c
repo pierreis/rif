@@ -118,7 +118,8 @@ char * rif_map_tostring_callback(const rif_val_t *val_ptr) {
   }
   uint32_t pos = 1;
   strcpy(tostring_str, "{");
-  for (uint32_t j = 0; j < map_size; ++j) {
+  uint32_t j = 0;
+  for (; j < map_size; ++j) {
     strcpy(tostring_str + pos, element_tostring[j].key_str);
     pos += element_tostring[j].key_len;
     strncpy(tostring_str + pos, ": ", 2);
@@ -130,10 +131,11 @@ char * rif_map_tostring_callback(const rif_val_t *val_ptr) {
   }
   strcpy(tostring_str + pos - (pos == 1 ? 0 : 2), "}");
 
-  CLEANUP_EXIT:
+  CLEANUP_EXIT:;
 
   // Free underlying string representations.
-  for (uint32_t k = 0; k < i; ++k) {
+  uint32_t k = 0;
+  for (; k < i; ++k) {
     if (element_tostring[k].key_str != rif_undef_str) {
       rif_free(element_tostring[k].key_str);
     }
