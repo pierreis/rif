@@ -101,7 +101,6 @@ if(BUILD_STATIC)
   add_library(${PROJECT_NAME}_static STATIC ${RIF_OBJECTS})
   set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
   target_link_libraries(${PROJECT_NAME}_static tinycthread)
-#  target_link_libraries(${PROJECT_NAME}_static ${Tcmalloc_LIBRARIES})
 endif(BUILD_STATIC)
 
 # Shared library.
@@ -110,5 +109,4 @@ if(BUILD_SHARED)
   add_library(${PROJECT_NAME}_shared SHARED ${RIF_OBJECTS})
   set_target_properties(${PROJECT_NAME}_shared PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
   target_link_libraries(${PROJECT_NAME}_shared tinycthread)
-#  target_link_libraries(${PROJECT_NAME}_static ${Tcmalloc_LIBRARIES})
 endif(BUILD_SHARED)
