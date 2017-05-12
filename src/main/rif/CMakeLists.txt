@@ -47,6 +47,16 @@ set(${PROJECT_NAME}_COLLECTION_OBJECTS
 
 add_library("${PROJECT_NAME}_collection" OBJECT ${${PROJECT_NAME}_COLLECTION_OBJECTS})
 
+# Concurrent
+
+set(${PROJECT_NAME}_CONCURRENT_OBJECTS
+
+    concurrent/rif_concurrent_pool.c
+
+)
+
+add_library("${PROJECT_NAME}_concurrent" OBJECT ${${PROJECT_NAME}_CONCURRENT_OBJECTS})
+
 # Util
 
 set(${PROJECT_NAME}_UTIL_OBJECTS
@@ -80,6 +90,7 @@ set(RIF_OBJECTS
 
     $<TARGET_OBJECTS:rif_base>
     $<TARGET_OBJECTS:rif_collection>
+    $<TARGET_OBJECTS:rif_concurrent>
     $<TARGET_OBJECTS:rif_util>
 
 )

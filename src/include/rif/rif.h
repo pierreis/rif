@@ -30,4 +30,5 @@
 #include "rif_base.h"
 #include "rif_collection.h"
 #include "rif_common.h"
+#include "rif_concurrent.h"
 #include "rif_util.h"

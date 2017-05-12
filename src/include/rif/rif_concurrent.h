@@ -26,3 +26,5 @@
 
 #include "concurrent/rif_atomic.h"
 #include "concurrent/rif_threads.h"
+
+#include "concurrent/rif_concurrent_pool.h"
