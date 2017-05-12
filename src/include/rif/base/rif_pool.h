@@ -53,7 +53,7 @@ typedef struct rif_pool_block_s {
    *
    * Elements array.
    */
-   char *elements[];
+   uint8_t *elements[];
 
 } rif_pool_block_t;
 

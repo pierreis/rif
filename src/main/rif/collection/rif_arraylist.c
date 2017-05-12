@@ -54,7 +54,7 @@ rif_arraylist_t * rif_arraylist_init(rif_arraylist_t *al_ptr, uint32_t capacity,
 rif_status_t rif_arraylist_ensure_capacity(rif_arraylist_t *al_ptr, uint32_t capacity) {
 
   // Maybe we don't need to do anything.
-  if (capacity <= al_ptr->capacity) {
+  if (__likely(capacity <= al_ptr->capacity)) {
     return RIF_OK;
   }
 
@@ -119,11 +119,11 @@ void rif_arraylist_destroy_callback(rif_arraylist_t *al_ptr) {
 rif_status_t rif_arraylist_insert(rif_arraylist_t *al_ptr, uint32_t index, rif_val_t *val_ptr) {
 
   // Check index and ensure sufficient capacity.
-  if (index > al_ptr->size) {
+  if (__unlikely(index > al_ptr->size)) {
     return RIF_ERR_OUT_OF_BOUNDS;
   }
   rif_status_t ensure_capacity_status = rif_arraylist_ensure_capacity(al_ptr, al_ptr->size + 1);
-  if (RIF_OK != ensure_capacity_status) {
+  if (__unlikely(RIF_OK != ensure_capacity_status)) {
     return ensure_capacity_status;
   }
 
@@ -134,7 +134,7 @@ rif_status_t rif_arraylist_insert(rif_arraylist_t *al_ptr, uint32_t index, rif_v
   }
 
   // Retain the new value, and put it in place.
-  if (NULL != val_ptr) {
+  if (__likely(NULL != val_ptr)) {
     rif_val_retain(val_ptr);
   }
   *elem_ptr = val_ptr;
@@ -144,14 +144,14 @@ rif_status_t rif_arraylist_insert(rif_arraylist_t *al_ptr, uint32_t index, rif_v
 }
 
 rif_status_t rif_arraylist_set(rif_arraylist_t *al_ptr, uint32_t index, rif_val_t *val_ptr) {
-  if (index >= al_ptr->size) {
+  if (__unlikely(index >= al_ptr->size)) {
     return RIF_ERR_OUT_OF_BOUNDS;
   }
   rif_val_t **elem_ptr = al_ptr->elements + index;
-  if (NULL != *elem_ptr) {
+  if (__likely(NULL != *elem_ptr)) {
     rif_val_release(*elem_ptr);
   }
-  if (NULL != val_ptr) {
+  if (__likely(NULL != val_ptr)) {
     rif_val_retain(val_ptr);
   }
   *elem_ptr = val_ptr;
@@ -165,13 +165,13 @@ rif_status_t rif_arraylist_set(rif_arraylist_t *al_ptr, uint32_t index, rif_val_
 rif_status_t rif_arraylist_remove(rif_arraylist_t *al_ptr, uint32_t index) {
 
   // Check index.
-  if (index >= al_ptr->size) {
+  if (__unlikely(index >= al_ptr->size)) {
     return RIF_ERR_OUT_OF_BOUNDS;
   }
 
   // Release the value to remove, and overwrite it.
   rif_val_t **elem_ptr = al_ptr->elements + index;
-  if (NULL != *elem_ptr) {
+  if (__likely(NULL != *elem_ptr)) {
     rif_val_release(*elem_ptr);
   }
   *elem_ptr = NULL;

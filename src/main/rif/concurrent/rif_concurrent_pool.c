@@ -24,50 +24,38 @@
  */
 
 static
-void _rif_concurrent_pool_destructor(void *pool) {
-  if (!pool) {
-    return;
-  }
-  rif_pool_destroy((rif_pool_t *) pool);
-  rif_free(pool);
+void _rif_concurrent_pool_dtor(rif_concurrent_queue_base_node_t *node) {
+  rif_free(node);
 }
 
 static
-rif_pool_t * _rif_concurrent_pool_get(rif_concurrent_pool_t *pool_ptr) {
-  rif_pool_t *tl_pool_ptr = (rif_pool_t *) tss_get(pool_ptr->pools);
-  if (!tl_pool_ptr) {
-    tl_pool_ptr = rif_malloc(sizeof(rif_pool_t));
-    if (!tl_pool_ptr) {
-      return tl_pool_ptr;
-    }
-    if (!rif_pool_init(tl_pool_ptr, pool_ptr->block_size, pool_ptr->element_size, false)) {
-      rif_free(tl_pool_ptr);
-      return NULL;
-    }
-    tss_set(pool_ptr->pools, tl_pool_ptr);
+rif_concurrent_pool_node_t *_rif_concurrent_pool_alloc(rif_concurrent_pool_t *pool_ptr) {
+  rif_concurrent_pool_node_t *node = rif_malloc(sizeof(rif_concurrent_pool_node_t) + pool_ptr->element_size,
+                                                "RIF_CONCURRENT_POOL_ALLOC");
+  if (__unlikely(!node)) {
+    return node;
   }
-  return tl_pool_ptr;
+  rif_concurrent_queue_base_node_init(&pool_ptr->free_queue, (rif_concurrent_queue_base_node_t *) node);
+  return node;
 }
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
  */
 
-rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr, uint32_t block_size,
-                                                 uint32_t element_size) {
-  if (!pool_ptr) {
+rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr, uint32_t element_size) {
+  if (__unlikely(!pool_ptr)) {
     return pool_ptr;
   }
-  pool_ptr->block_size = block_size;
-  pool_ptr->element_size = element_size;
-  if (thrd_error == tss_create(&pool_ptr->pools, _rif_concurrent_pool_destructor)) {
+  if (__unlikely(NULL == rif_concurrent_queue_base_init(&pool_ptr->free_queue, _rif_concurrent_pool_dtor))) {
     return NULL;
   }
+  pool_ptr->element_size = element_size;
   return pool_ptr;
 }
 
 void rif_concurrent_pool_destroy(rif_concurrent_pool_t *pool_ptr) {
-  tss_delete(pool_ptr->pools);
+  rif_concurrent_queue_base_destroy(&pool_ptr->free_queue);
 }
 
 /******************************************************************************
@@ -75,17 +63,19 @@ void rif_concurrent_pool_destroy(rif_concurrent_pool_t *pool_ptr) {
  */
 
 void * rif_concurrent_pool_borrow(rif_concurrent_pool_t *pool_ptr) {
-  rif_pool_t *tl_pool_ptr = _rif_concurrent_pool_get(pool_ptr);
-  if (!tl_pool_ptr) {
-    return NULL;
+  rif_concurrent_pool_node_t *node =
+      (rif_concurrent_pool_node_t *) rif_concurrent_queue_base_pop(&pool_ptr->free_queue);
+  if (__likely(NULL != node)) {
+    return &node->element;
   }
-  return rif_pool_borrow(tl_pool_ptr);
+  return _rif_concurrent_pool_alloc(pool_ptr);
 }
 
 void rif_concurrent_pool_return(rif_concurrent_pool_t *pool_ptr, void *ptr) {
-  rif_pool_t *tl_pool_ptr = _rif_concurrent_pool_get(pool_ptr);
-  if (!tl_pool_ptr) {
+  if (__unlikely(!ptr)) {
     return;
   }
-  rif_pool_return(tl_pool_ptr, ptr);
+  rif_concurrent_pool_node_t *node_ptr = ptr;
+  --node_ptr; // Move back before the node header
+  rif_concurrent_queue_base_push(&pool_ptr->free_queue, (rif_concurrent_queue_base_node_t *) node_ptr);
 }

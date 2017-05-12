@@ -36,8 +36,8 @@ rif_pool_block_t * _rif_pool_block_alloc(rif_pool_t *pool_ptr) {
   pool_ptr->first_block = block_ptr;
 
   // Initialize block
-  char *cur = (char *) &block_ptr->elements;
-  char *last = cur + (pool_ptr->element_size * (pool_ptr->block_size - 1));
+  uint8_t *cur = (uint8_t *) &block_ptr->elements;
+  uint8_t *last = cur + (pool_ptr->element_size * (pool_ptr->block_size - 1));
   for (; cur <= last - pool_ptr->element_size; cur += pool_ptr->element_size) {
     void **cur_ptr = (void **) cur;
     *cur_ptr = cur + pool_ptr->element_size;

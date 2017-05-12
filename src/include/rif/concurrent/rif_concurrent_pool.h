@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include "rif_threads.h"
+#include "rif/concurrent/rif_threads.h"
+#include "rif/concurrent/collection/rif_concurrent_queue_base.h"
 
 /*****************************************************************************/
 
@@ -39,9 +40,39 @@ extern "C" {
 /**
  * @private
  *
- * Rif pool block.
+ * Rif concurrent pool node.
+ */
+typedef struct rif_concurrent_pool_node_s {
+
+  /**
+   * @private
+   *
+   * A pool node is a que node.
+   */
+  rif_concurrent_queue_base_node_t _;
+
+  /**
+   * @private
+   *
+   * The actual memory block.
+   */
+  char element[];
+
+} rif_concurrent_pool_node_t;
+
+/**
+ * @private
+ *
+ * Rif concurrent pool.
  */
 typedef struct rif_concurrent_pool_t {
+
+  /**
+   * @private
+   *
+   * Element free queue.
+   */
+  rif_concurrent_queue_base_t free_queue;
 
   /**
    * @private
@@ -49,20 +80,6 @@ typedef struct rif_concurrent_pool_t {
    * Element size.
    */
   uint32_t element_size;
-
-  /**
-   * @private
-   *
-   * Block size of the pool.
-   */
-  uint32_t block_size;
-
-  /**
-   * @private
-   *
-   *
-   */
-  tss_t pools;
 
 } rif_concurrent_pool_t;
 
@@ -81,8 +98,7 @@ typedef struct rif_concurrent_pool_t {
  * @return the initialized pool, or `NULL` in case of failure
  */
 RIF_API
-rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr, uint32_t block_size,
-                                                 uint32_t element_size);
+rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr, uint32_t element_size);
 
 /**
  * Destroy a pool

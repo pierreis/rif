@@ -53,6 +53,8 @@ set(${PROJECT_NAME}_CONCURRENT_OBJECTS
 
     concurrent/rif_concurrent_pool.c
 
+    concurrent/collection/rif_concurrent_queue_base.c
+
 )
 
 add_library("${PROJECT_NAME}_concurrent" OBJECT ${${PROJECT_NAME}_CONCURRENT_OBJECTS})

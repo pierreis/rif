@@ -17,10 +17,14 @@
  * License along with this library.
  */
 
-#include <inttypes.h>
-#include <stdio.h>
+#pragma once
 
-#include "rif/rif.h"
+/*****************************************************************************/
 
-#include "rif/util/rif_alloc_internal.h"
-#include "rif/util/rif_hints.h"
+#if defined(__GNUC__)
+  RIF_INLINE bool __likely(bool x) { return __builtin_expect((x), true); }
+  RIF_INLINE bool __unlikely(bool x) { return __builtin_expect((x), false); }
+#else
+  RIF_INLINE bool __likely(bool x) { return x; }
+	RIF_INLINE bool __unlikely(bool x) { return x; }
+#endif
