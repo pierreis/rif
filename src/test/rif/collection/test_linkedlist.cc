@@ -32,7 +32,7 @@ bool _alloc_filter_new(const char *tag) {
 
 static
 bool _alloc_filter_new_node(const char *tag) {
-  return 0 != strcmp(tag, "RIF_LINKEDLIST_NEW_NODE");
+  return 0 != strcmp(tag, "RIF_POOL_ALLOC");
 }
 
 /******************************************************************************

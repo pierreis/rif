@@ -103,6 +103,13 @@ typedef struct rif_linkedlist_s {
    */
   rif_linkedlist_node_t *last;
 
+  /**
+   * @private
+   *
+   * Memory pool for node allocation.
+   */
+  rif_pool_t pool;
+
 } rif_linkedlist_t;
 
 /******************************************************************************
