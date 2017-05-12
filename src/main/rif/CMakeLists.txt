@@ -14,7 +14,8 @@ set(${PROJECT_NAME}_BASE_OBJECTS
     base/rif_string.c
     base/rif_val.c
 
-    base/rif_pool.c
+    base/rif_paged_pool.c
+    base/rif_paged_pool_hooks.c
 
 )
 
@@ -52,6 +53,7 @@ add_library("${PROJECT_NAME}_collection" OBJECT ${${PROJECT_NAME}_COLLECTION_OBJ
 set(${PROJECT_NAME}_CONCURRENT_OBJECTS
 
     concurrent/rif_concurrent_pool.c
+    concurrent/rif_concurrent_pool_hooks.c
 
     concurrent/collection/rif_concurrent_queue_base.c
 

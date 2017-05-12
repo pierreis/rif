@@ -70,7 +70,7 @@ rif_linkedlist_t * rif_linkedlist_build(rif_linkedlist_t *ll_ptr, bool free) {
   ll_ptr->first = NULL;
   ll_ptr->last = NULL;
   ll_ptr->size = 0;
-  if (!rif_pool_init(&ll_ptr->pool, POOL_SIZE, sizeof(rif_linkedlist_node_t), true)) {
+  if (!rif_paged_pool_init(&ll_ptr->pool, sizeof(rif_linkedlist_node_t), POOL_SIZE, true)) {
     rif_val_release(ll_ptr);
     return NULL;
   }
@@ -97,7 +97,7 @@ void rif_linkedlist_destroy_callback(rif_linkedlist_t *ll_ptr) {
     rif_val_release(node_ptr->val);
     node_ptr = next_ptr;
   }
-  rif_pool_destroy(&ll_ptr->pool);
+  rif_paged_pool_destroy(&ll_ptr->pool);
 }
 
 /******************************************************************************
@@ -130,7 +130,7 @@ rif_status_t rif_linkedlist_insert(rif_linkedlist_t *ll_ptr, uint32_t index, rif
   }
 
   // Allocate a new node.
-  rif_linkedlist_node_t *new_node_ptr = rif_pool_borrow(&ll_ptr->pool);
+  rif_linkedlist_node_t *new_node_ptr = rif_paged_pool_borrow(&ll_ptr->pool);
   if (NULL == new_node_ptr) {
     return RIF_ERR_MEMORY;
   }
@@ -194,7 +194,7 @@ rif_status_t rif_linkedlist_remove(rif_linkedlist_t *ll_ptr, uint32_t index) {
 
   // Free it.
   rif_val_release(current->val);
-  rif_pool_return(&ll_ptr->pool, current);
+  rif_paged_pool_return(&ll_ptr->pool, current);
 
   --ll_ptr->size;
   return RIF_OK;

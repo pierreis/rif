@@ -38,10 +38,26 @@
  * @param __args      The additional arguments to pass to the hook.
  * @return            The return value of calling `hook` if it is defined, `default` otherwise.
  */
-#define rif_named_hook(__structure, __hook, __default, __object, ...) \
+#define rif_hook_named(__structure, __hook, __default, __object, ...) \
     ((__object) && (__object)->__structure && (__object)->__structure->__hook ? \
         (__object)->__structure->__hook((__object), ## __VA_ARGS__) : \
         (__default))
+
+/**
+ * Call a hook on an object that does not return.
+ *
+ * @param __structure The name of the hook structure.
+ * @param __hook      The name of the hook to call.
+ * @param __object    The object to call `hook` for.
+ * @param __args      The additional arguments to pass to the hook.
+ * @return            The return value of calling `hook` if it is defined, `default` otherwise.
+ */
+#define rif_hook_named_noreturn(__structure, __hook, __object, ...) \
+    do { \
+        if ((__object) && (__object)->__structure && (__object)->__structure->__hook) { \
+            (__object)->__structure->__hook((__object), ## __VA_ARGS__); \
+        } \
+    } while (0)
 
 /**
  * Call a hook on an object, inside a structure named `hook`. If hook not found, then return the default value.
@@ -52,4 +68,15 @@
  * @param __args    The additional arguments to pass to the hook.
  * @return          The return value of calling `hook` if it is defined, `default` otherwise.
  */
-#define rif_hook(__hook, __default, __object, ...) rif_named_hook(hooks, __hook, __default, __object, ## __VA_ARGS__)
+#define rif_hook(__hook, __default, __object, ...) rif_hook_named(hooks, __hook, __default, __object, ## __VA_ARGS__)
+
+/**
+ * Call a hook on an object that does not return, inside a structure named `hook`.
+ *
+ * @param __hook    The name of the hook to call.
+ * @param __object  The object to call `hook` for.
+ * @param __args    The additional arguments to pass to the hook.
+ * @return          The return value of calling `hook` if it is defined, `default` otherwise.
+ */
+#define rif_hook_noreturn(__hook, __object, ...) \
+    rif_hook_named_noreturn(hooks, __hook, __object, ## __VA_ARGS__)

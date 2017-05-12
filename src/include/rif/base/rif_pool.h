@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "rif/util/rif_hook.h"
+
 /*****************************************************************************/
 
 #ifdef __cplusplus
@@ -34,28 +36,8 @@ extern "C" {
  * TYPES
  */
 
-/**
- * @private
- *
- * Rif pool block.
- */
-typedef struct rif_pool_block_s {
-
-  /**
-   * @private
-   *
-   * Next block.
-   */
-  struct rif_pool_block_s *next;
-
-  /**
-   * @private
-   *
-   * Elements array.
-   */
-   uint8_t *elements[];
-
-} rif_pool_block_t;
+/* Forward declaration of `rif_pool_hooks_t`. */
+typedef struct rif_pool_hooks_s rif_pool_hooks_t;
 
 /**
  * Rif pool.
@@ -68,64 +50,66 @@ typedef struct rif_pool_s {
   /**
    * @private
    *
-   * Element size.
+   * Hooks used by `rif_pool_t` functions.
    */
-  uint32_t element_size;
-
-  /**
-   * @private
-   *
-   * Block size of the pool.
-   */
-  uint32_t block_size;
-
-  /**
-   * @private
-   *
-   * Pointer to the first available element of the pool.
-   */
-  void *first_available;
-
-  /**
-   * @private
-   *
-   * Pointer to the last available element of the pool.
-   */
-  void *last_available;
-
-  /**
-   * @private
-   *
-   * Pointer to the first block.
-   */
-  rif_pool_block_t *first_block;
+  const rif_pool_hooks_t * hooks;
 
 } rif_pool_t;
+
+/**
+ * Hooks used by `nuuk_pool_t` implementations.
+ */
+struct rif_pool_hooks_s {
+
+  /**
+   * Destroy a pool, and release resources used by it.
+   *
+   * @param pool the pool to destroy.
+   */
+  void (*destroy)(rif_pool_t *pool_ptr);
+
+  /**
+   * @see rif_pool_borrow
+   */
+  void *(*borrow)(rif_pool_t *pool_ptr);
+
+  /**
+   * @see rif_pool_return
+   */
+  void (*return_)(rif_pool_t *pool_ptr, void *ptr);
+
+};
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
  */
 
 /**
- * Initialize a pool
+ * Initialize a pool.
  *
- * @param pool_ptr pool to initialize
- * @param block_size block size
- * @param element_size element size
- * @param lazy if `true`, the first block will be initialized lazily
+ * This function should only be used by `rif_pool_t` subtypes.
  *
- * @return the initialized pool, or `NULL` in case of failure
+ * @param pool_ptr the pool to initialize.
+ * @param hooks pool hooks
+ * @return the initialized pool, or `NULL` if initialization failed.
+ *
+ * @relates rif_pool_t
  */
-RIF_API
-rif_pool_t * rif_pool_init(rif_pool_t *pool_ptr, uint32_t block_size, uint32_t element_size, bool lazy);
+RIF_INLINE
+rif_pool_t * rif_pool_init(rif_pool_t *pool_ptr, const rif_pool_hooks_t *hooks) {
+  pool_ptr->hooks = hooks;
+  return pool_ptr;
+}
 
 /**
  * Destroy a pool
  *
  * @param pool_ptr pool to destroy
  */
-RIF_API
-void rif_pool_destroy(rif_pool_t *pool_ptr);
+RIF_INLINE
+void rif_pool_destroy(rif_pool_t *pool_ptr) {
+  rif_hook_noreturn(destroy, pool_ptr);
+}
 
 /******************************************************************************
  * ACCESSOR FUNCTIONS
@@ -140,8 +124,10 @@ void rif_pool_destroy(rif_pool_t *pool_ptr);
  *
  * @return an element from the pool, or `NULL` in case of allocation failure
  */
-RIF_API
-void * rif_pool_borrow(rif_pool_t *pool_ptr);
+RIF_INLINE
+void * rif_pool_borrow(rif_pool_t *pool_ptr) {
+  return rif_hook(borrow, 0, pool_ptr);
+}
 
 /**
  * Return a borrowed element back to the pool
@@ -152,8 +138,10 @@ void * rif_pool_borrow(rif_pool_t *pool_ptr);
  * @param pool_ptr the pool
  * @param ptr element to return to the pool
  */
-RIF_API
-void rif_pool_return(rif_pool_t *pool_ptr, void *ptr);
+RIF_INLINE
+void rif_pool_return(rif_pool_t *pool_ptr, void *ptr) {
+  rif_hook_noreturn(return_, pool_ptr, ptr);
+}
 
 /*****************************************************************************/
 

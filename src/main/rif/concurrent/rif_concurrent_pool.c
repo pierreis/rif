@@ -47,6 +47,9 @@ rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr
   if (__unlikely(!pool_ptr)) {
     return pool_ptr;
   }
+  if (__unlikely(!rif_pool_init((rif_pool_t *) pool_ptr, &rif_concurrent_pool_hooks))) {
+    return NULL;
+  }
   if (__unlikely(NULL == rif_concurrent_queue_base_init(&pool_ptr->free_queue, _rif_concurrent_pool_dtor))) {
     return NULL;
   }
@@ -65,10 +68,10 @@ void rif_concurrent_pool_destroy(rif_concurrent_pool_t *pool_ptr) {
 void * rif_concurrent_pool_borrow(rif_concurrent_pool_t *pool_ptr) {
   rif_concurrent_pool_node_t *node =
       (rif_concurrent_pool_node_t *) rif_concurrent_queue_base_pop(&pool_ptr->free_queue);
-  if (__likely(NULL != node)) {
-    return &node->element;
+  if (__unlikely(NULL == node)) {
+    node = _rif_concurrent_pool_alloc(pool_ptr);
   }
-  return _rif_concurrent_pool_alloc(pool_ptr);
+  return &node->element;
 }
 
 void rif_concurrent_pool_return(rif_concurrent_pool_t *pool_ptr, void *ptr) {

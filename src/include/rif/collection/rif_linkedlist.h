@@ -108,7 +108,7 @@ typedef struct rif_linkedlist_s {
    *
    * Memory pool for node allocation.
    */
-  rif_pool_t pool;
+  rif_paged_pool_t pool;
 
 } rif_linkedlist_t;
 

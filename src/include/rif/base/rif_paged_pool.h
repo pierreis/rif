@@ -19,13 +19,12 @@
 
 /**
  * @file
- * @brief Rif concurrent memory pool.
+ * @brief Rif memory pool.
  */
 
 #pragma once
 
-#include "rif/concurrent/rif_threads.h"
-#include "rif/concurrent/collection/rif_concurrent_queue_base.h"
+#include "rif/util/rif_hook.h"
 
 /*****************************************************************************/
 
@@ -40,46 +39,40 @@ extern "C" {
 /**
  * @private
  *
- * Rif concurrent pool node.
+ * Rif pool block.
  */
-typedef struct rif_concurrent_pool_node_s {
+typedef struct rif_paged_pool_block_s {
 
   /**
    * @private
    *
-   * A pool node is a que node.
+   * Next block.
    */
-  rif_concurrent_queue_base_node_t _;
+  struct rif_paged_pool_block_s *next;
 
   /**
    * @private
    *
-   * The actual memory block.
+   * Elements array.
    */
-  char element[];
+   uint8_t *elements[];
 
-} rif_concurrent_pool_node_t;
+} rif_paged_pool_block_t;
 
 /**
- * @private
+ * Rif pool.
  *
- * Rif concurrent pool.
+ * @note This structure internal members are private, and may change without notice. They should only be accessed
+ *       through the public `rif_paged_pool_t` methods.
  */
-typedef struct rif_concurrent_pool_t {
+typedef struct rif_paged_pool_s {
 
   /**
    * @private
    *
-   * `rif_concurrent_pool_t` is a `rif_pool_t` subtype.
+   * `rif_paged_pool_t` is a `rif_pool_t` subtype.
    */
   rif_pool_t _;
-
-  /**
-   * @private
-   *
-   * Element free queue.
-   */
-  rif_concurrent_queue_base_t free_queue;
 
   /**
    * @private
@@ -88,7 +81,35 @@ typedef struct rif_concurrent_pool_t {
    */
   uint32_t element_size;
 
-} rif_concurrent_pool_t;
+  /**
+   * @private
+   *
+   * Block size of the pool.
+   */
+  uint32_t block_size;
+
+  /**
+   * @private
+   *
+   * Pointer to the first available element of the pool.
+   */
+  void *first_available;
+
+  /**
+   * @private
+   *
+   * Pointer to the last available element of the pool.
+   */
+  void *last_available;
+
+  /**
+   * @private
+   *
+   * Pointer to the first block.
+   */
+  rif_paged_pool_block_t *first_block;
+
+} rif_paged_pool_t;
 
 /******************************************************************************
  * HOOKS
@@ -97,9 +118,9 @@ typedef struct rif_concurrent_pool_t {
 /**
  * @private
  *
- * Concurrent pool hooks.
+ * Paged pool hooks.
  */
-extern const rif_pool_hooks_t rif_concurrent_pool_hooks;
+extern const rif_pool_hooks_t rif_paged_pool_hooks;
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
@@ -116,7 +137,8 @@ extern const rif_pool_hooks_t rif_concurrent_pool_hooks;
  * @return the initialized pool, or `NULL` in case of failure
  */
 RIF_API
-rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr, uint32_t element_size);
+rif_paged_pool_t * rif_paged_pool_init(rif_paged_pool_t *pool_ptr, uint32_t element_size, uint32_t block_size,
+                                       bool lazy);
 
 /**
  * Destroy a pool
@@ -124,7 +146,7 @@ rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr
  * @param pool_ptr pool to destroy
  */
 RIF_API
-void rif_concurrent_pool_destroy(rif_concurrent_pool_t *pool_ptr);
+void rif_paged_pool_destroy(rif_paged_pool_t *pool_ptr);
 
 /******************************************************************************
  * ACCESSOR FUNCTIONS
@@ -140,7 +162,7 @@ void rif_concurrent_pool_destroy(rif_concurrent_pool_t *pool_ptr);
  * @return an element from the pool, or `NULL` in case of allocation failure
  */
 RIF_API
-void * rif_concurrent_pool_borrow(rif_concurrent_pool_t *pool_ptr);
+void * rif_paged_pool_borrow(rif_paged_pool_t *pool_ptr);
 
 /**
  * Return a borrowed element back to the pool
@@ -152,7 +174,7 @@ void * rif_concurrent_pool_borrow(rif_concurrent_pool_t *pool_ptr);
  * @param ptr element to return to the pool
  */
 RIF_API
-void rif_concurrent_pool_return(rif_concurrent_pool_t *pool_ptr, void *ptr);
+void rif_paged_pool_return(rif_paged_pool_t *pool_ptr, void *ptr);
 
 /*****************************************************************************/
 

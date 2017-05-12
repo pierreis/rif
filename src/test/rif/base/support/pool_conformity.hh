@@ -17,21 +17,33 @@
  * License along with this library.
  */
 
-/**
- * @file
- * @brief Rif base includes.
- */
-
 #pragma once
 
-#include "base/rif_val.h"
+#include "../../test_internal.h"
 
-#include "base/rif_bool.h"
-#include "base/rif_double.h"
-#include "base/rif_int.h"
-#include "base/rif_null.h"
-#include "base/rif_pair.h"
-#include "base/rif_string.h"
+/******************************************************************************
+ * TEST HELPERS
+ */
 
-#include "base/rif_pool.h"
-#include "base/rif_paged_pool.h"
+typedef struct rif_pool_conformity_generator_s {
+  rif_pool_t *(*init)();
+  void (*destroy)(rif_pool_t *);
+} rif_pool_conformity_generator_t;
+
+class PoolConformity : public ::testing::TestWithParam<rif_pool_conformity_generator_s *> {
+
+protected:
+
+    rif_pool_t *pool_ptr;
+
+private:
+
+    virtual void SetUp() {
+      pool_ptr = GetParam()->init();
+    }
+
+    virtual void TearDown() {
+      GetParam()->destroy(pool_ptr);
+    }
+
+};

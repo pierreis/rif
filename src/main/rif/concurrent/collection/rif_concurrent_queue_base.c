@@ -42,7 +42,8 @@ void _rif_concurrent_queue_base_add(rif_concurrent_queue_base_t *queue_ptr,
     atomic_store_explicit(&node_ptr->reference_count, 1, memory_order_release);
     if (!atomic_compare_exchange_strong_explicit(&queue_ptr->first, (uintptr_t *) &head, (uintptr_t) node_ptr,
                                                  memory_order_release, memory_order_relaxed)) {
-      uint32_t reference_count = atomic_fetch_add_explicit(&head->reference_count, QUEUE_PUSH - 1, memory_order_release);
+      uint32_t reference_count = atomic_fetch_add_explicit(&node_ptr->reference_count, QUEUE_PUSH - 1,
+                                                           memory_order_release);
       if (reference_count == 1) {
         continue;
       }
@@ -94,12 +95,17 @@ rif_concurrent_queue_base_node_t * rif_concurrent_queue_base_pop(rif_concurrent_
       (rif_concurrent_queue_base_node_t *) atomic_load_explicit(&queue_ptr->first, memory_order_acquire);
   while (__likely(head)) {
 
+    //printf("Trying to pop %p\n", head);
+
     // Increase reference count
+    rif_concurrent_queue_base_node_t *prev_head = head;
     uint32_t reference_count = atomic_load_explicit(&head->reference_count, memory_order_relaxed);
+    //printf("Reference count: %u\n", reference_count);
     if ((reference_count & REFS_MASK) == 0 ||
-        atomic_compare_exchange_strong_explicit(&head->reference_count, &reference_count, reference_count + 1,
-                                                memory_order_acquire, memory_order_relaxed)) {
+        !atomic_compare_exchange_strong_explicit(&head->reference_count, &reference_count, reference_count + 1,
+                                                 memory_order_acquire, memory_order_relaxed)) {
       head = (rif_concurrent_queue_base_node_t *) atomic_load_explicit(&queue_ptr->first, memory_order_acquire);
+      //printf("Moo! %i\n", reference_count & REFS_MASK);
       continue;
     }
 
@@ -112,9 +118,9 @@ rif_concurrent_queue_base_node_t * rif_concurrent_queue_base_pop(rif_concurrent_
     }
 
     // Head has changed on us
-    reference_count = atomic_fetch_add_explicit(&head->reference_count, -1, memory_order_acq_rel);
+    reference_count = atomic_fetch_add_explicit(&prev_head->reference_count, -1, memory_order_acq_rel);
     if (reference_count == QUEUE_PUSH + 1) {
-      _rif_concurrent_queue_base_add(queue_ptr, head);
+      _rif_concurrent_queue_base_add(queue_ptr, prev_head);
     }
   }
 
