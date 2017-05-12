@@ -22,6 +22,8 @@ set(${PROJECT_NAME}_TEST_BASE_OBJECTS
     base/test_string.cc
     base/test_val.cc
 
+    base/test_pool.cc
+
 )
 
 add_executable("${PROJECT_NAME}_test_base" ${${PROJECT_NAME}_TEST_BASE_OBJECTS})

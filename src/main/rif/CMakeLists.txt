@@ -14,6 +14,8 @@ set(${PROJECT_NAME}_BASE_OBJECTS
     base/rif_string.c
     base/rif_val.c
 
+    base/rif_pool.c
+
 )
 
 add_library("${PROJECT_NAME}_base" OBJECT ${${PROJECT_NAME}_BASE_OBJECTS})

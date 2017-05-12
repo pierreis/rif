@@ -32,3 +32,5 @@
 #include "base/rif_null.h"
 #include "base/rif_pair.h"
 #include "base/rif_string.h"
+
+#include "base/rif_pool.h"
