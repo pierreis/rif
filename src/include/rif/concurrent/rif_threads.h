@@ -22,4 +22,6 @@
  * @brief Rif threading.
  */
 
+#include <semaphore.h>
+
 #include "tinycthread.h"
