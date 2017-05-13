@@ -66,7 +66,7 @@ private:
 static
 void _rif_concurrent_pool_test_worker(rif_concurrent_pool_t *pool) {
   for (uint32_t i = 0; i < 100; ++i) {
-    uint32_t alloc = (uint32_t) rand() % 100 + 1;
+    uint32_t alloc = (uint32_t) rand() % 500 + 1;
     void *blocks[alloc];
     for (uint32_t j = 0; j < alloc; ++j) {
       blocks[j] = rif_concurrent_pool_borrow(pool);
