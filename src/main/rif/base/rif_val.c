@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,15 @@
  */
 
 #include "rif/rif_internal.h"
+
+#include "rif/base/rif_bool.h"
+#include "rif/base/rif_double.h"
+#include "rif/base/rif_int.h"
+#include "rif/base/rif_null.h"
+#include "rif/base/rif_string.h"
+#include "rif/collection/rif_list.h"
+#include "rif/collection/rif_map.h"
+#include "rif/collection/rif_queue.h"
 
 /******************************************************************************
  * MACROS
@@ -117,6 +126,7 @@ static const rif_val_destroy_callback_t _rif_val_destroy_callbacks[RIF_VAL_TYPE_
     [RIF_STRING] = rif_string_destroy_callback,
     [RIF_LIST]   = rif_list_destroy_callback,
     [RIF_MAP]    = rif_map_destroy_callback,
+    [RIF_QUEUE]  = rif_queue_destroy_callback,
     [RIF_PAIR]   = rif_pair_destroy_callback
 };
 
@@ -128,7 +138,8 @@ static const rif_val_hashcode_callback_t _rif_val_hashcode_callbacks[RIF_VAL_TYP
     [RIF_DOUBLE] = rif_double_hashcode_callback,
     [RIF_STRING] = rif_string_hashcode_callback,
     [RIF_LIST]   = rif_list_hashcode_callback,
-    [RIF_MAP]    =  rif_map_hashcode_callback,
+    [RIF_MAP]    = rif_map_hashcode_callback,
+    [RIF_QUEUE]  = rif_queue_hashcode_callback,
     [RIF_PAIR]   = rif_pair_hashcode_callback
 };
 
@@ -141,6 +152,7 @@ static const rif_val_equals_callback_t _rif_val_equals_callbacks[RIF_VAL_TYPE_CO
     [RIF_STRING] = rif_string_equals_callback,
     [RIF_LIST]   = rif_list_equals_callback,
     [RIF_MAP]    =  rif_map_equals_callback,
+    [RIF_QUEUE]  = _rif_val_equals_address,
     [RIF_PAIR]   = rif_pair_equals_callback
 };
 
@@ -153,6 +165,7 @@ static const rif_val_tostring_callback_t _rif_val_tostring_callbacks[RIF_VAL_TYP
     [RIF_STRING] = rif_string_tostring_callback,
     [RIF_LIST]   = rif_list_tostring_callback,
     [RIF_MAP]    = rif_map_tostring_callback,
+    [RIF_QUEUE]  = rif_queue_tostring_callback,
     [RIF_PAIR]   = rif_pair_tostring_callback
 };
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,8 +60,10 @@ typedef struct rif_list_hooks_s rif_list_hooks_t;
 /**
  * The `rif_list_t` interface.
  * All rif list implementations inherit from this structure.
+ *
+ * @extends rif_val_t
  */
-typedef struct rif_list_s {
+typedef struct rif_list_t {
 
   /**
    * @private

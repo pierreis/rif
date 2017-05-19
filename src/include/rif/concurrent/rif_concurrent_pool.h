@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "rif/base/rif_pool.h"
 #include "rif/concurrent/rif_threads.h"
 #include "rif/concurrent/collection/rif_concurrent_queue_base.h"
 
@@ -61,9 +62,9 @@ typedef struct rif_concurrent_pool_node_s {
 } rif_concurrent_pool_node_t;
 
 /**
- * @private
- *
  * Rif concurrent pool.
+ *
+ * @extends rif_pool_t
  */
 typedef struct rif_concurrent_pool_t {
 

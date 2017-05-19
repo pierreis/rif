@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -76,5 +76,4 @@ TEST(Bool, rif_false_should_not_be_equal_to_true) {
 TEST(Bool, rif_bool_fromval_should_cast_value_correctly) {
   EXPECT_FALSE(NULL == rif_bool_fromval(rif_val(rif_true)));
   EXPECT_FALSE(NULL == rif_bool_fromval(rif_val(rif_false)));
-  EXPECT_TRUE(NULL == rif_bool_fromval(rif_val(rif_null)));
 }

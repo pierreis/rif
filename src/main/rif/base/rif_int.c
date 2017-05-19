@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,9 @@
  */
 
 #include "rif/rif_internal.h"
+
+#include "rif/base/rif_int.h"
+#include "rif/util/rif_hash.h"
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
@@ -69,6 +72,6 @@ char * rif_int_tostring_callback(const rif_val_t *val_ptr) {
     return tostring_str;
   }
   memset(tostring_str, 0, 32);
-  sprintf(tostring_str, "%" PRId64, rif_int_get(int_ptr));
+  snprintf(tostring_str, sizeof(char) * 32, "%" PRId64, rif_int_get(int_ptr));
   return tostring_str;
 }

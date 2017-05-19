@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "rif/rif_common.h"
 #include "rif/util/rif_hook.h"
 
 /*****************************************************************************/
@@ -37,7 +38,7 @@ extern "C" {
  */
 
 /* Forward declaration of `rif_pool_hooks_t`. */
-typedef struct rif_pool_hooks_s rif_pool_hooks_t;
+typedef struct rif_pool_hooks_t rif_pool_hooks_t;
 
 /**
  * Rif pool.
@@ -45,7 +46,7 @@ typedef struct rif_pool_hooks_s rif_pool_hooks_t;
  * @note This structure internal members are private, and may change without notice. They should only be accessed
  *       through the public `rif_pool_t` methods.
  */
-typedef struct rif_pool_s {
+typedef struct rif_pool_t {
 
   /**
    * @private
@@ -57,14 +58,14 @@ typedef struct rif_pool_s {
 } rif_pool_t;
 
 /**
- * Hooks used by `nuuk_pool_t` implementations.
+ * @private
+ *
+ * Hooks used by @ref rif_pool_t implementations.
  */
-struct rif_pool_hooks_s {
+struct rif_pool_hooks_t {
 
   /**
-   * Destroy a pool, and release resources used by it.
-   *
-   * @param pool the pool to destroy.
+   * Destroy callback.
    */
   void (*destroy)(rif_pool_t *pool_ptr);
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
 /**
  * @file
- * @brief Rif null type.
+ * @brief Null value type.
  */
 
 #pragma once
@@ -37,17 +37,22 @@ extern "C" {
  */
 
 /**
- * Rif null type.
+ * Null value type.
  *
- * @note This structure internal members are private, and may change without notice. They should only be accessed
- *       through the public `rif_null_t` methods.
+ * @ref rif_null_t is not intended to be initialized manually. Instead, it defines one singleton instance,
+ * @ref rif_null. This singleton can be used or compared against directly.
+ *
+ * @note Internal members are private, and may change without notice.
+ *       They should only be accessed through the public @ref rif_null_t or @ref rif_val_t methods.
+ *
+ * @extends rif_val_t
  */
-typedef struct rif_null_s {
+typedef struct rif_null_t {
 
   /**
    * @private
    *
-   * `rif_null_t` is a `rif_val_t` subtype.
+   * @ref rif_null_t is a @ref rif_val_t subtype.
    */
   rif_val_t _;
 
@@ -58,10 +63,14 @@ typedef struct rif_null_s {
  */
 
 /**
- * Cast a `rif_val_t` to `rif_null_t`.
+ * Cast a @ref rif_val_t to @ref rif_null_t.
  *
- * @param  __val The `rif_val_t`.
- * @return       The casted `rif_null_t`.
+ * @pre @a __val_ptr @b MUST be of type @ref rif_null_t, or `NULL`.
+ *
+ * @param  __val the @ref rif_val_t.
+ * @return       the casted @ref rif_null_t.
+ *
+ * @relates rif_null_t
  */
 #define rif_null_fromval(__val_ptr) (rif_val_tosubtype(__val_ptr, RIF_NULL, rif_null_t))
 
@@ -70,7 +79,7 @@ typedef struct rif_null_s {
  */
 
 /**
- * Null singleton.
+ * Singleton @ref rif_null_t instance.
  *
  * @relates rif_null_t
  */
@@ -83,9 +92,9 @@ extern const rif_null_t *rif_null;
 /**
  * @private
  *
- * Callback function get the string representation of a `rif_null_t`.
+ * Value tostring callback for @ref rif_null_t.
  *
- * @relates rif_null_t
+ * @memberof rif_null_t
  */
 char * rif_null_tostring_callback(const rif_val_t *val_ptr);
 

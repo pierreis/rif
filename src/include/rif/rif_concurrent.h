@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,3 +28,7 @@
 #include "concurrent/rif_threads.h"
 
 #include "concurrent/rif_concurrent_pool.h"
+
+#include "concurrent/collection/rif_concurrent_blocking_queue.h"
+#include "concurrent/collection/rif_concurrent_queue.h"
+#include "concurrent/collection/rif_concurrent_queue_base.h"

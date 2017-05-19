@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "rif/rif_common.h"
 #include "rif/concurrent/rif_atomic.h"
 
 /*****************************************************************************/
@@ -37,32 +38,46 @@ extern "C" {
  */
 
 /**
- * Rif val types.
+ * Value subtype type tokens.
+ *
+ * Each value subtype type token except for @ref RIF_UNDEF has a one-to-one mapping with a corresponding @ref rif_val_t
+ * subtype.
  */
-typedef enum rif_val_type_e {
+typedef enum rif_val_type_t {
 
-    RIF_UNDEF  = 0,
-    RIF_NULL   = 1,
-    RIF_BOOL   = 2,
-    RIF_INT    = 3,
-    RIF_DOUBLE = 4,
-    RIF_STRING = 5,
-    RIF_PTR    = 6,
-    RIF_LIST   = 7,
-    RIF_MAP    = 8,
-    RIF_QUEUE  = 9,
-    RIF_PAIR   = 10,
-    RIF_BUFFER = 11
+    RIF_UNDEF  = 0,  /**< Undefined value type */
+    RIF_NULL   = 1,  /**< Value of type @ref rif_null_t */
+    RIF_BOOL   = 2,  /**< Value of type @ref rif_bool_t */
+    RIF_INT    = 3,  /**< Value of type @ref rif_int_t */
+    RIF_DOUBLE = 4,  /**< Value of type @ref rif_double_t */
+    RIF_STRING = 5,  /**< Value of type @ref rif_string_t */
+    RIF_PTR    = 6,  /**< Value of type @ref rif_ptr_t */
+    RIF_LIST   = 7,  /**< Value of type @ref rif_list_t */
+    RIF_MAP    = 8,  /**< Value of type @ref rif_map_t */
+    RIF_QUEUE  = 9,  /**< Value of type @ref rif_queue_t */
+    RIF_PAIR   = 10, /**< Value of type @ref rif_pair_t */
+    RIF_BUFFER = 11  /**< Value of type @ref rif_buffer_t */
 
 } rif_val_type_t;
 
 /**
- * Rif val base interface type.
+ * Rif base value interface type.
  *
- * @note This structure internal members are private, and may change without notice. They should only be accessed
- *       through the public `rif_val_t` methods.
+ * This is the type all upper-level Rif value types inherit from. Semantically, a value can be of any type represented
+ * by @ref rif_val_type_t.
+ *
+ * A value wraps a thread-safe reference counter, used to determine when a value can be safely freed.
+ * This is especially useful used in combination with Rif collections, to delegate memory management of heap-allocated
+ * values to the collection structure, ensuring that the value is freed automatically when the value is not referenced
+ * anymore. The reference counter is manipulated using the @ref rif_val_retain and @rif_val_release functions.
+ *
+ * Unless mentioned otherwise, all the value-level functions accept as parameter any @ref rif_val_t subtype without
+ * requiring explicit type casting.
+ *
+ * @note Internal members are private, and may change without notice.
+ *       They should only be accessed through the public @ref rif_val_t methods.
  */
-typedef struct rif_val_s {
+typedef struct rif_val_t {
 
   /**
    * @private
@@ -74,84 +89,76 @@ typedef struct rif_val_s {
   /**
    * @private
    *
-   * The value type.
+   * The value subtype type.
    */
   rif_val_type_t type;
 
   /**
    * @private
    *
-   * Whether or not to free the variable when the reference count reaches 0.
+   * Whether or not to free the variable when the reference count reaches `0`.
    */
   bool free;
 
 } rif_val_t;
 
 /******************************************************************************
- * GLOBAL CONSTANTS
+ * GLOBALS
  */
 
 /**
  * @private
  *
- * Undef string representation.
+ * String representation for undefined value types.
  */
 extern const char *rif_undef_str;
 
 /******************************************************************************
- * HELPER MACROS
+ * MACROS
  */
 
 /**
- * Cast a value subtype to `rif_val_t`.
+ * Cast a value subtype to @ref rif_val_t.
  *
- * @param  __val_ptr the `rif_val_t` subtype
- * @return           the casted `rif_val_t`
+ * @param  __val_ptr the @ref rif_val_t subtype
+ * @return           the casted @ref rif_val_t
  *
  * @relates rif_val_t
  */
 #define rif_val(__val_ptr) ((rif_val_t *) __val_ptr)
 
 /**
- * Attempts to cast a `rif_val_t` to a value subtype. Returns `NULL` if cast fails.
- *
- * @param  __val_ptr the `rif_val_t`
- * @param __val_type the expected value type
- * @param __type     the type to cast to
- * @return           the casted subtype, or `NULL` if cast is incorrect
- *
- * @relates rif_val_t
- */
-#define rif_val_tosubtype(__val_ptr, __val_type, __type) \
-    ((__type *) rif_val_tosubtype_helper((rif_val_t *) (__val_ptr), (__val_type)))
-
-/**
  * Return the type of a value.
  *
- * @param __val_ptr the value to get the type of
- * @return          the value type. If the type is unknown, it will be RIF_UNDEF
+ * @param __val_ptr the value to get the type of.
+ * @return          the value type of @a __val_ptr,
+ *                  or @ref RIF_UNDEF if either the value type is unknown or @a __val_ptr is `NULL`.
  *
  * @relates rif_val_t
  */
 #define rif_val_type(__val_ptr) (__val_ptr ? (rif_val(__val_ptr)->type) : RIF_UNDEF)
 
 /**
- * Increment the reference count of a value.
+ * Retain a value.
  *
- * @param __val_ptr the value to retain
- * @return          the value
+ * Increments the reference count of @a __val_ptr by one.
+ *
+ * @param __val_ptr the value to retain.
+ * @return          the value @a __val_ptr.
  *
  * @relates rif_val_t
  */
 #define rif_val_retain(__val_ptr) (rif_val_retain_helper(rif_val(__val_ptr)))
 
 /**
- * Decrement the reference count of a value.
+ * Release a value.
  *
- * If `rif_val_t.reference_count` reaches 0 and `rif_val_t.free` is true, the value will be freed.
+ * Decrements the reference count of @a __val_ptr by one.
+ * If the reference count of @a __val_ptr reaches `0` and the value is heap-allocated, it will be freed.
  *
- * @param __val_ptr the value to release
- * @return          the value if `rif_val_t.reference_count > 0`, otherwise NULL
+ * @param __val_ptr the value to release.
+ * @return          the value @a __val_ptr if the decremented reference count is strictly greater than zero,
+ *                  or `NULL` otherwise.
  *
  * @relates rif_val_t
  */
@@ -160,19 +167,24 @@ extern const char *rif_undef_str;
 /**
  * Get the hashcode of a value.
  *
- * @param __val_ptr the value to get the hashcode for
- * @return          the hashcode value
+ * @param __val_ptr the value to get the hashcode for.
+ * @return          the hashcode value of @a __val_ptr.
  *
  * @relates rif_val_t
  */
 #define rif_val_hashcode(__val_ptr) (rif_val_hashcode_helper(rif_val(__val_ptr)))
 
 /**
- * Check for the equality of two values.
+ * Check for the semantic equality of two values.
  *
- * @param __val_ptr   the first value to compare
- * @param __other_ptr the second value to compare
- * @return            `true` if `__val_ptr` is equal to `__other_ptr`, or `false` otherwise
+ * The exact meaning of equality for each value depends on the @ref rif_val_t subtype implementation.
+ *
+ * @param __val_ptr   the first value to compare.
+ * @param __other_ptr the second value to compare.
+ * @return            `true` if @a __val_ptr semantically equals to @a __other_ptr,
+ *                    or `false` otherwise
+ *
+ * @relates rif_val_t
  */
 #define rif_val_equals(__val_ptr, __other_ptr) \
     (rif_val_equals_helper(rif_val(__val_ptr), rif_val(__other_ptr)))
@@ -180,8 +192,11 @@ extern const char *rif_undef_str;
 /**
  * Get the string representation of a value.
  *
- * @param __val_ptr the value to get the string representation for
- * @return          the string representation on success, otherwise `NULL`
+ * The exact string representation format for each value depends on the @ref rif_val_t subtype implementation.
+ *
+ * @param __val_ptr the value to get the string representation for.
+ * @return          the string representation of @a __val_ptr,
+ *                  or `NULL` in case of error.
  *
  * @relates rif_val_t
  */
@@ -190,15 +205,15 @@ extern const char *rif_undef_str;
 /**
  * Return the reference count of a value.
  *
- * @param __val_ptr the value to get the reference count of
- * @return          the reference count
+ * @param __val_ptr the value to get the reference count of.
+ * @return          the reference count of @a __val_ptr.
  *
  * @relates rif_val_t
  */
 #define rif_val_reference_count(__val_ptr) (atomic_load(&(rif_val(__val_ptr))->reference_count))
 
 /******************************************************************************
- * LIFECYCLE FUNCTIONS
+ * API
  */
 
 /**
@@ -206,27 +221,46 @@ extern const char *rif_undef_str;
  *
  * Initialize a value.
  *
- * This function should only be used by `rif_val_t` subtypes.
+ * @note This function should only be used by @ref rif_val_t subtypes.
  *
- * @param val  the value to initialize
- * @param type the value type
- * @param free whether or not to free the value when the reference count reaches 0
- * @return     the initialized value, or `NULL` if initialization failed
+ * @param val_ptr the value to initialize.
+ * @param type    the value subtype type token.
+ * @param free    whether or not to free the value when the reference count reaches `0`
+ * @return        the initialized value,
+ *                or `NULL` if initialization failed.
  *
  * @relates rif_val_t
  */
 rif_val_t * rif_val_init(rif_val_t *val_ptr, rif_val_type_t type, bool free);
 
 /******************************************************************************
- * HELPER FUNCTIONS
+ * INTERNAL
  */
+
+/**
+ * @private
+ *
+ * Cast a @ref rif_val_t to a value subtype.
+ *
+ * @pre @a __val_ptr @b MUST be of type @a __val_type, represented by the value subtype type token @a __val_type_token,
+ *      or `NULL`.
+ *
+ * @param __val_ptr        the @ref rif_val_t.
+ * @param __val_type_token the value type.
+ * @param __val_type       the value subtype to cast to.
+ * @return                 the casted subtype for @a __val_ptr, or `NULL` if cast is incorrect.
+ *
+ * @relates rif_val_t
+ */
+#define rif_val_tosubtype(__val_ptr, __val_type_token, __val_type) \
+    ((__val_type *) rif_val_tosubtype_helper((rif_val_t *) (__val_ptr), (__val_type_token)))
 
 /**
  * @private
  *
  * Helper function to retain a value.
  *
- * @relates rif_val_t
+ * @memberof rif_val_t
  */
 rif_val_t * rif_val_retain_helper(rif_val_t *val_ptr);
 
@@ -235,7 +269,7 @@ rif_val_t * rif_val_retain_helper(rif_val_t *val_ptr);
  *
  * Helper function to release a value.
  *
- * @relates rif_val_t
+ * @memberof rif_val_t
  */
 rif_val_t * rif_val_release_helper(rif_val_t *val_ptr);
 
@@ -244,7 +278,7 @@ rif_val_t * rif_val_release_helper(rif_val_t *val_ptr);
  *
  * Helper function get the hashcode of a value.
  *
- * @relates rif_val_t
+ * @memberof rif_val_t
  */
 uint32_t rif_val_hashcode_helper(const rif_val_t *val_ptr);
 
@@ -253,7 +287,7 @@ uint32_t rif_val_hashcode_helper(const rif_val_t *val_ptr);
  *
  * Helper function check for the equality of two values.
  *
- * @relates rif_val_t
+ * @memberof rif_val_t
  */
 bool rif_val_equals_helper(const rif_val_t *val_ptr, const rif_val_t *other_ptr);
 
@@ -262,28 +296,29 @@ bool rif_val_equals_helper(const rif_val_t *val_ptr, const rif_val_t *other_ptr)
  *
  * Helper function get the string representation of a value.
  *
- * @relates rif_val_t
+ * @memberof rif_val_t
  */
 char * rif_val_tostring_helper(const rif_val_t *val_ptr);
-
-/******************************************************************************
- * SUBTYPE FUNCTIONS
- */
 
 /**
  * @private
  *
- * Checks a value type and returns the value if it matches. Returns `NULL` otherwise.
+ * Checks a value type and returns the value if it matches.
  *
- * @param val_ptr           the value to check
- * @param expected_val_type the expected value type
- * @return                  the value if it matches the expected value type, or `NULL` otherwise
+ * @param val_ptr           the value to check.
+ * @param expected_val_type the expected value type.
+ * @return                  the value @a val if it matches the expected value type,
+ *                          or `NULL` otherwise.
  *
- * @relates rif_val_t
+ * @memberof rif_val_t
  */
 RIF_INLINE
 rif_val_t * rif_val_tosubtype_helper(rif_val_t *val_ptr, rif_val_type_t expected_val_type) {
-  return val_ptr->type == expected_val_type ? val_ptr : NULL;
+  if (!val_ptr) {
+    return val_ptr;
+  }
+  assert(val_ptr->type == expected_val_type);
+  return val_ptr;
 }
 
 /*****************************************************************************/

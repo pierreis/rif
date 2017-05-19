@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,9 @@ extern "C" {
  * TYPES
  */
 
+/* Forward declaration of `rif_concurrent_queue_base_t`. */
+typedef struct rif_concurrent_queue_base_s rif_concurrent_queue_base_t;
+
 /**
  * @private
  *
@@ -66,14 +69,22 @@ typedef struct rif_concurrent_queue_base_node_s {
  *
  * Optional callback function called to destroy elements.
  */
-typedef void (*rif_concurrent_queue_base_destroy_t)(rif_concurrent_queue_base_node_t *node_ptr);
+typedef void (*rif_concurrent_queue_base_destroy_t)(rif_concurrent_queue_base_node_t *node_ptr, void *udata);
+
+/**
+ * @private
+ *
+ * Optional callback function called when an element is added.
+ */
+typedef void (*rif_concurrent_queue_base_push_t)(rif_concurrent_queue_base_t *queue_ptr,
+                                                 rif_concurrent_queue_base_node_t *node_ptr, void *udata);
 
 /**
  * @private
  *
  * Rif concurrent queue.
  */
-typedef struct rif_concurrent_queue_base_t {
+struct rif_concurrent_queue_base_s {
 
   /**
    * @private
@@ -89,7 +100,21 @@ typedef struct rif_concurrent_queue_base_t {
    */
    rif_concurrent_queue_base_destroy_t dtor;
 
-} rif_concurrent_queue_base_t;
+  /**
+   * @private
+   *
+   * Node add callback.
+   */
+  rif_concurrent_queue_base_push_t add;
+
+  /**
+   * @private
+   *
+   * User-provided data.
+   */
+  void *udata;
+
+};
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
@@ -100,9 +125,12 @@ typedef struct rif_concurrent_queue_base_t {
  */
 RIF_INLINE
 rif_concurrent_queue_base_t * rif_concurrent_queue_base_init(rif_concurrent_queue_base_t *queue_ptr,
-                                                             rif_concurrent_queue_base_destroy_t dtor) {
+                                                             rif_concurrent_queue_base_push_t add,
+                                                             rif_concurrent_queue_base_destroy_t dtor, void *udata) {
   atomic_init(&queue_ptr->first, 0);
+  queue_ptr->add = add;
   queue_ptr->dtor = dtor;
+  queue_ptr->udata = udata;
   return queue_ptr;
 }
 

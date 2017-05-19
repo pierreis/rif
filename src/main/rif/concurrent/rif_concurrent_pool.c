@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,15 @@
 
 #include "rif/rif_internal.h"
 
+#include "rif/base/rif_pool.h"
+#include "rif/concurrent/rif_concurrent_pool.h"
+
 /******************************************************************************
  * STATIC HELPERS
  */
 
 static
-void _rif_concurrent_pool_dtor(rif_concurrent_queue_base_node_t *node) {
+void _rif_concurrent_pool_dtor(rif_concurrent_queue_base_node_t *node, void *udata) {
   rif_free(node);
 }
 
@@ -50,7 +53,8 @@ rif_concurrent_pool_t * rif_concurrent_pool_init(rif_concurrent_pool_t *pool_ptr
   if (__unlikely(!rif_pool_init((rif_pool_t *) pool_ptr, &rif_concurrent_pool_hooks))) {
     return NULL;
   }
-  if (__unlikely(NULL == rif_concurrent_queue_base_init(&pool_ptr->free_queue, _rif_concurrent_pool_dtor))) {
+  if (__unlikely(NULL == rif_concurrent_queue_base_init(
+      &pool_ptr->free_queue, NULL, _rif_concurrent_pool_dtor, NULL))) {
     return NULL;
   }
   pool_ptr->element_size = element_size;

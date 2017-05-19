@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,5 +44,4 @@ TEST(Null, rif_null_should_be_equal_to_itself) {
 
 TEST(Null, rif_null_fromval_should_cast_value_correctly) {
   EXPECT_FALSE(NULL == rif_null_fromval(rif_val(rif_null)));
-  EXPECT_TRUE(NULL == rif_null_fromval(rif_val(rif_true)));
 }

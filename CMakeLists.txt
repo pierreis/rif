@@ -143,5 +143,5 @@ endif(BUILD_TESTS)
 # Include subdirectory.
 #
 
-#add_subdirectory(docs)
+add_subdirectory(docs)
 add_subdirectory(src)

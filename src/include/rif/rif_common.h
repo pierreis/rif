@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,10 @@
  * @brief Rif common includes.
  */
 
+#define RIF_DEBUG
+
 #pragma once
 
+#include "common/rif_libs.h"
+#include "common/rif_macros.h"
 #include "common/rif_status.h"

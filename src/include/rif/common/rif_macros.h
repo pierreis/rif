@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,6 +58,7 @@
   #define RIF_STATIC_ASSERT_INTERNAL(__expr, __msg) \
       extern char RIF_STATIC_ASSERTION__##__msg[1]; \
       extern char RIF_STATIC_ASSERTION__##__msg[(__expr)?1:2]
+
 #endif /* #ifdef __GNUC__ */
 
 /**

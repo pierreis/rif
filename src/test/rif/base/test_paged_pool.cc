@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@
  * TEST HELPERS
  */
 
-#define NUM_ELEMENTS 16
+#define NUM_ELEMENTS 64
 
 static
 bool _alloc_filter(const char *tag) {

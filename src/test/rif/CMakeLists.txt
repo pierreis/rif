@@ -60,6 +60,7 @@ set(${PROJECT_NAME}_TEST_CONCURRENT_OBJECTS
     base/support/pool_conformity.cc
 
     concurrent/test_concurrent_pool.cc
+    concurrent/collection/test_concurrent_blocking_queue.cc
 
 )
 
