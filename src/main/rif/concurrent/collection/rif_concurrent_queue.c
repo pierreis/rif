@@ -62,6 +62,8 @@ rif_concurrent_queue_t * rif_concurrent_queue_init(rif_concurrent_queue_t *queue
  */
 
 rif_status_t rif_concurrent_queue_push(rif_concurrent_queue_t *queue_ptr, rif_val_t *val_ptr) {
+  assert(NULL != queue_ptr);
+  assert(NULL != val_ptr);
   rif_concurrent_queue_node_t *node = rif_concurrent_pool_borrow(&queue_ptr->pool);
   if (__unlikely(!node)) {
     return RIF_ERR_MEMORY;
@@ -75,6 +77,7 @@ rif_status_t rif_concurrent_queue_push(rif_concurrent_queue_t *queue_ptr, rif_va
 }
 
 rif_val_t * rif_concurrent_queue_pop(rif_concurrent_queue_t *queue_ptr) {
+  assert(NULL != queue_ptr);
   rif_concurrent_queue_node_t *node =
       (rif_concurrent_queue_node_t *) rif_concurrent_queue_base_pop(&queue_ptr->queue_base);
   if (!node) {

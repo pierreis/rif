@@ -25,10 +25,21 @@
  * TEST HELPERS
  */
 
-#define NUM_ELEMENTS 8
-#define NUM_THREADS  8
-#define SLEEP_TIME   100 * 1000
-#define SLEEP() usleep(SLEEP_TIME)
+#define NUM_ELEMENTS   8
+#define NUM_THREADS    8
+#define WAIT_TIME      50 * 1000
+#define SLEEP_TIME     WAIT_TIME
+#define SLEEP(__utime) usleep(__utime)
+
+#define TS_TIMEOUT(__utime) \
+    ({ \
+      timespec ts; \
+      clock_gettime(CLOCK_REALTIME, &ts); \
+      uint64_t n_nsec = ts.tv_nsec += (__utime) * 1000; \
+      ts.tv_sec += n_nsec / 1000000000; \
+      ts.tv_nsec = n_nsec % 1000000000; \
+      ts; \
+    })
 
 static
 bool _alloc_filter(const char *tag) {
@@ -68,6 +79,19 @@ void _rif_concurrent_blocking_queue_test_pop(rif_concurrent_blocking_queue_t *qu
   ASSERT_TRUE(rif_val(rif_true) == rif_concurrent_blocking_queue_pop(queue));
 }
 
+static
+void _rif_concurrent_blocking_queue_test_timedpop_fail(rif_concurrent_blocking_queue_t *queue) {
+  timespec timeout = TS_TIMEOUT(WAIT_TIME);
+  ASSERT_TRUE(NULL == rif_concurrent_blocking_queue_timedpop(queue, &timeout));
+  ASSERT_TRUE(ETIMEDOUT == errno);
+}
+
+static
+void _rif_concurrent_blocking_queue_test_timedpop_success(rif_concurrent_blocking_queue_t *queue) {
+  timespec timeout = TS_TIMEOUT(WAIT_TIME);
+  ASSERT_TRUE(rif_val(rif_true) == rif_concurrent_blocking_queue_timedpop(queue, &timeout));
+}
+
 /******************************************************************************
  * TESTS
  */
@@ -81,7 +105,7 @@ TEST_F(ConcurrentBlockingQueue, rif_concurrent_blocking_queue_trypop_should_work
 
 TEST_F(ConcurrentBlockingQueue, rif_concurrent_blocking_queue_pop_should_block_waiting_for_data) {
   auto thread = std::thread(_rif_concurrent_blocking_queue_test_pop, &queue);
-  SLEEP();
+  SLEEP(SLEEP_TIME);
   rif_concurrent_blocking_queue_push(&queue, rif_val(rif_true));
   thread.join();
   ASSERT_TRUE(NULL == rif_concurrent_blocking_queue_trypop(&queue));
@@ -90,6 +114,20 @@ TEST_F(ConcurrentBlockingQueue, rif_concurrent_blocking_queue_pop_should_block_w
 TEST_F(ConcurrentBlockingQueue, rif_concurrent_blocking_queue_pop_should_not_block_if_data_is_available) {
   rif_concurrent_blocking_queue_push(&queue, rif_val(rif_true));
   auto thread = std::thread(_rif_concurrent_blocking_queue_test_pop, &queue);
+  thread.join();
+  ASSERT_TRUE(NULL == rif_concurrent_blocking_queue_trypop(&queue));
+}
+
+TEST_F(ConcurrentBlockingQueue, rif_concurrent_blocking_queue_timedpop_should_return_after_timeout) {
+  auto thread = std::thread(_rif_concurrent_blocking_queue_test_timedpop_fail, &queue);
+  thread.join();
+  ASSERT_TRUE(NULL == rif_concurrent_blocking_queue_trypop(&queue));
+}
+
+TEST_F(ConcurrentBlockingQueue, rif_concurrent_blocking_queue_timedpop_should_return_value) {
+  auto thread = std::thread(_rif_concurrent_blocking_queue_test_timedpop_success, &queue);
+  SLEEP(SLEEP_TIME / 2);
+  rif_concurrent_blocking_queue_push(&queue, rif_val(rif_true));
   thread.join();
   ASSERT_TRUE(NULL == rif_concurrent_blocking_queue_trypop(&queue));
 }

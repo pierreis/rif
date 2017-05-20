@@ -66,6 +66,7 @@ void rif_concurrent_blocking_queue_destroy_callback(rif_concurrent_blocking_queu
  */
 
 rif_val_t * rif_concurrent_blocking_queue_pop(rif_concurrent_blocking_queue_t *queue_ptr) {
+  assert(NULL != queue_ptr);
   rif_val_t *val = NULL;
   while (true) {
     sem_wait(&queue_ptr->semaphore);
@@ -78,8 +79,8 @@ rif_val_t * rif_concurrent_blocking_queue_pop(rif_concurrent_blocking_queue_t *q
 }
 
 rif_val_t * rif_concurrent_blocking_queue_trypop(rif_concurrent_blocking_queue_t *queue_ptr) {
+  assert(NULL != queue_ptr);
   if (sem_trywait(&queue_ptr->semaphore)) {
-    errno = EAGAIN;
     return NULL;
   }
   return rif_concurrent_queue_pop((rif_concurrent_queue_t *) queue_ptr);
@@ -87,16 +88,16 @@ rif_val_t * rif_concurrent_blocking_queue_trypop(rif_concurrent_blocking_queue_t
 
 rif_val_t * rif_concurrent_blocking_queue_timedpop(rif_concurrent_blocking_queue_t *queue_ptr,
                                                    const struct timespec *abs_timeout) {
+  assert(NULL != queue_ptr);
   rif_val_t *val = NULL;
   while (true) {
-    if (-1 == sem_timedwait(&queue_ptr->semaphore, abs_timeout)) {
-      errno = ETIMEDOUT;
+    int sem_timedwait_result = sem_timedwait(&queue_ptr->semaphore, abs_timeout);
+    if (-1 == sem_timedwait_result) {
       return NULL;
     }
     val = rif_concurrent_queue_pop((rif_concurrent_queue_t *) queue_ptr);
-    if (__likely(val)) {
-      break;
-    }
+    assert(NULL != val);
+    break;
   }
   return val;
 }

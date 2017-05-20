@@ -62,13 +62,21 @@ int sem_wait(sem_t *sem_handle) {
 RIF_INLINE
 int sem_trywait(sem_t *sem_handle) {
   long ret = dispatch_semaphore_wait(*sem_handle, DISPATCH_TIME_NOW);
-  return 0 == ret ? ret : -1;
+  if (0 != ret) {
+    errno = EAGAIN;
+    return -1;
+  }
+  return ret;
 }
 
 RIF_INLINE
 int sem_timedwait(sem_t *sem_handle, const struct timespec *abs_timeout) {
   long ret = dispatch_semaphore_wait(*sem_handle, dispatch_walltime(abs_timeout, 0));
-  return 0 == ret ? ret : -1;
+  if (0 != ret) {
+    errno = ETIMEDOUT;
+    return -1;
+  }
+  return ret;
 }
 
 RIF_INLINE
