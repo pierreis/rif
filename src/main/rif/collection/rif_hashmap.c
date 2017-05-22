@@ -22,6 +22,7 @@
 #include "rif/collection/rif_hashmap.h"
 #include "rif/util/rif_hash.h"
 #include "rif/util/rif_math.h"
+#include "rif/util/rif_misc.h"
 
 /******************************************************************************
  * HELPERS
