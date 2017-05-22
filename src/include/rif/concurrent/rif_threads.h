@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "tinycthread.h"
+#include "../../../../lib/tinycthread/source/tinycthread.h"
 #include "rif/rif_common.h"
 
 #if __APPLE__
