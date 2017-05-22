@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "rif/base/rif_pair.h"
 #include "rif/base/rif_val.h"
 #include "rif/collection/rif_iterator.h"
 #include "rif/common/rif_status.h"
@@ -50,8 +51,10 @@ typedef struct rif_map_hooks_s rif_map_hooks_t;
 /**
  * The `rif_map_t` interface.
  * All rif map implementations inherit from this structure.
+ *
+ * @extends rif_val_t
  */
-typedef struct rif_map_s {
+typedef struct rif_map_t {
 
   /**
    * @private

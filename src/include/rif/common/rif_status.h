@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ extern "C" {
 /**
  * Rif status codes
  */
-typedef enum rif_status_e {
+typedef enum rif_status_t {
   RIF_OK,
   RIF_ERR_CAPACITY,
   RIF_ERR_MEMORY,

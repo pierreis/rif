@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -231,6 +231,11 @@ typedef _Atomic(size_t)             atomic_size_t;
 typedef _Atomic(ptrdiff_t)          atomic_ptrdiff_t;
 typedef _Atomic(intmax_t)           atomic_intmax_t;
 typedef _Atomic(uintmax_t)          atomic_uintmax_t;
+
+#ifdef INT128MAX
+  typedef _Atomic(__int128_t)       atomic_int128_t;
+  typedef _Atomic(__uint128_t)      atomic_uint128_t;
+#endif
 
 /******************************************************************************
  * BASE ATOMIC OPERATIONS

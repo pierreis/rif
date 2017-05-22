@@ -14,6 +14,8 @@ set(${PROJECT_NAME}_TEST_BASE_OBJECTS
 
     ${RIF_TEST_GENERIC_RUNNER_PATH}
 
+    base/support/pool_conformity.cc
+
     base/test_bool.cc
     base/test_double.cc
     base/test_int.cc
@@ -21,6 +23,8 @@ set(${PROJECT_NAME}_TEST_BASE_OBJECTS
     base/test_pair.cc
     base/test_string.cc
     base/test_val.cc
+
+    base/test_paged_pool.cc
 
 )
 
@@ -46,6 +50,23 @@ set(${PROJECT_NAME}_TEST_COLLECTION_OBJECTS
 add_executable("${PROJECT_NAME}_test_collection" ${${PROJECT_NAME}_TEST_COLLECTION_OBJECTS})
 target_link_libraries("${PROJECT_NAME}_test_collection" ${PROJECT_NAME}_static gtest gtest_main)
 add_test("${PROJECT_NAME}_test_collection" "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}_test_collection")
+
+# Concurrent
+
+set(${PROJECT_NAME}_TEST_CONCURRENT_OBJECTS
+
+    ${RIF_TEST_GENERIC_RUNNER_PATH}
+
+    base/support/pool_conformity.cc
+
+    concurrent/test_concurrent_pool.cc
+    concurrent/collection/test_concurrent_blocking_queue.cc
+
+)
+
+add_executable("${PROJECT_NAME}_test_concurrent" ${${PROJECT_NAME}_TEST_CONCURRENT_OBJECTS})
+target_link_libraries("${PROJECT_NAME}_test_concurrent" ${PROJECT_NAME}_static gtest gtest_main)
+add_test("${PROJECT_NAME}_test_concurrent" "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}_test_concurrent")
 
 # Util
 

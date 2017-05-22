@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
 /**
  * @file
- * @brief Rif integer type.
+ * @brief Integer value type.
  */
 
 #pragma once
@@ -37,24 +37,26 @@ extern "C" {
  */
 
 /**
- * Rif integer type.
+ * Double value type.
  *
- * @note This structure internal members are private, and may change without notice. They should only be accessed
- *       through the public `rif_int_t` methods.
+ * @note Internal members are private, and may change without notice.
+ *       They should only be accessed through the public @ref rif_int_t or @ref rif_val_t methods.
+ *
+ * @extends rif_val_t
  */
-typedef struct rif_int_s {
+typedef struct rif_int_t {
 
   /**
    * @private
    *
-   * `rif_int_t` is a `rif_val_t` subtype.
+   * @ref rif_int_t is a @ref rif_val_t subtype.
    */
   rif_val_t _;
 
   /**
    * @private
    *
-   * Integer value.
+   * Double value.
    */
   int64_t value;
 
@@ -65,39 +67,55 @@ typedef struct rif_int_s {
  */
 
 /**
- * Cast a `rif_val_t` to `rif_int_t`.
+ * Cast a @ref rif_val_t to @ref rif_int_t.
  *
- * @param  __val The `rif_val_t`.
- * @return       The casted `rif_int_t`.
+ * @pre @a __val_ptr @b MUST be of type @ref rif_int_t, or `NULL`.
+ *
+ * @param  __val the @ref rif_val_t.
+ * @return       the casted @ref rif_int_t.
+ *
+ * @relates rif_int_t
  */
 #define rif_int_fromval(__val_ptr) (rif_val_tosubtype(__val_ptr, RIF_INT, rif_int_t))
 
 /******************************************************************************
- * LIFECYCLE FUNCTIONS
+ * LIFECYCLE
  */
 
 /**
- * Allocates a new `rif_int_t`.
+ * Initialize a @ref rif_int_t.
  *
- * @param value The integer value for the `rif_int_t`.
- * @return      The initialized `rif_int_t`.
+ * @param value The integer value for the @ref rif_int_t.
+ * @return      The initialized @ref rif_int_t,
+ *              or null if initialization failed.
+ *
+ * @public @memberof rif_int_t
  */
 RIF_API
 rif_int_t * rif_int_init(rif_int_t *int_ptr, int64_t value);
 
 /**
- * Allocates a new `rif_int_t`.
+ * Allocate a new @ref rif_int_t from the stack.
  *
- * @param value The integer value for the new `rif_int_t`.
- * @return      The corresponding new `rif_int_t`, or `NULL` if memory allocation failed.
+ * @param value The integer value for the new @ref rif_int_t.
+ * @return      The initialized @ref rif_int_t,
+ *              or null if allocation or initialization failed.
+ *
+ * @public @memberof rif_int_t
  */
 RIF_API
 rif_int_t * rif_int_new(int64_t value);
 
 /**
- * Releases a `rif_int_t`. If the reference count reaches 0, the value will be freed.
+ * Release a @ref rif_int_t.
  *
- * @param value The `rif_int_t` to release.
+ * Decrements the reference count of @a int_ptr by one.
+ * If the reference count of @a int_ptr reaches `0` and the value is heap-allocated, it will be freed.
+ *
+ * @param value The @ref rif_int_t to release.
+ *
+ * @see rif_val_release
+ * @public @memberof rif_int_t
  */
 RIF_INLINE
 void rif_int_release(rif_int_t *int_ptr) {
@@ -105,60 +123,74 @@ void rif_int_release(rif_int_t *int_ptr) {
 }
 
 /******************************************************************************
- * ACCESSOR FUNCTIONS
+ * API
  */
 
 /**
- * Get the integer value of a `rif_int_t`, or a fallback value if the `rif_int_t` pointer is `NULL`.
+ * Get the integer value of a @ref rif_int_t, or a fallback value if the @ref rif_int_t pointer is `NULL`.
  *
- * @param int_ptr The `rif_int_t` to get the corresponding integer value for.
- * @return        The integer value, or `NULL` if `int_ptr` is `NULL`.
+ * @param int_ptr the @ref rif_int_t to get the corresponding integer value for.
+ * @return        the integer value corresponding to @a int_ptr,
+ *                or @a fallback if @a int_ptr is `NULL`.
+ *
+ * @public @memberof rif_int_t
  */
 RIF_INLINE
-int64_t rif_int_getorelse(rif_int_t *int_ptr, double fallback) {
+int64_t rif_int_getorelse(rif_int_t *int_ptr, int64_t fallback) {
   return int_ptr ? int_ptr->value : fallback;
 }
 
 /**
- * Get the integer value of a `rif_int_t`.
+ * Get the bool value of a @ref rif_int_t.
  *
- * @param int_ptr The `rif_int_t` to get the corresponding integer value for.
- * @return        The integer value.
+ * @param int_ptr the @ref rif_int_t to get the corresponding integer value for.
+ * @return        the integer value,
+ *                or `0.0` if @a int_ptr is `NULL`.
+ *
+ * @public @memberof rif_int_t
  */
 RIF_INLINE
 int64_t rif_int_get(rif_int_t *int_ptr) {
-  return rif_int_getorelse(int_ptr, 0);
+  return rif_int_getorelse(int_ptr, 0.0);
 }
 
 /******************************************************************************
- * CALLBACK FUNCTIONS
+ * VALUE CALLBACKS
  */
 
 /**
  * @private
  *
- * Callback function get the hashcode of a `rif_int_t`.
+ * Value destroy callback for @ref rif_bool_t.
+ *
+ * @memberof rif_int_t
  */
 void rif_int_destroy_callback(rif_val_t *val_ptr);
 
 /**
  * @private
  *
- * Callback function get the hashcode of a `rif_int_t`.
+ * Value hashcode callback for @ref rif_bool_t.
+ *
+ * @memberof rif_int_t
  */
 uint32_t rif_int_hashcode_callback(const rif_val_t *val_ptr);
 
 /**
  * @private
  *
- * Callback function to compare equality of two values.
+ * Value equals callback for @ref rif_bool_t.
+ *
+ * @memberof rif_int_t
  */
 bool rif_int_equals_callback(const rif_val_t *val_ptr, const rif_val_t *other_ptr);
 
 /**
  * @private
  *
- * Callback function get the string representation of a `rif_int_t`.
+ * Value tostring callback for @ref rif_bool_t.
+ *
+ * @memberof rif_int_t
  */
 char * rif_int_tostring_callback(const rif_val_t *val_ptr);
 

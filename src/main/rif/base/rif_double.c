@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,9 @@
  */
 
 #include "rif/rif_internal.h"
+
+#include "rif/base/rif_double.h"
+#include "rif/util/rif_hash.h"
 
 /******************************************************************************
  * LIFECYCLE FUNCTIONS
@@ -69,7 +72,7 @@ char * rif_double_tostring_callback(const rif_val_t *val_ptr) {
     return tostring_str;
   }
   memset(tostring_str, 0, 64);
-  sprintf(tostring_str, "%.16g", rif_double_get(double_ptr));
+  snprintf(tostring_str, sizeof(char) * 64, "%.16g", rif_double_get(double_ptr));
   if (!strchr(tostring_str, '.')) {
     size_t tostring_str_len = strlen(tostring_str);
     strcpy(tostring_str + tostring_str_len, ".0\0");

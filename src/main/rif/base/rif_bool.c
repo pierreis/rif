@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,8 @@
  */
 
 #include "rif/rif_internal.h"
+
+#include "rif/base/rif_bool.h"
 
 /*****************************************************************************
  * GLOBAL CONSTANTS
@@ -50,7 +52,7 @@ static const rif_bool_t _rif_true = {
 const rif_bool_t *rif_true = &_rif_true;
 
 /******************************************************************************
- * CALLBACK FUNCTIONS
+ * VALUE CALLBACKS
  */
 
 uint32_t rif_bool_hashcode_callback(const rif_val_t *val_ptr) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
  */
 
 #define XXH_PRIVATE_API
+#define XXH_NAMESPACE rif
 #include "xxhash.h"
 
 #include "rif/rif_internal.h"

@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,3 +32,6 @@
 #include "base/rif_null.h"
 #include "base/rif_pair.h"
 #include "base/rif_string.h"
+
+#include "base/rif_pool.h"
+#include "base/rif_paged_pool.h"

@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "rif/base/rif_paged_pool.h"
 #include "rif/collection/rif_list.h"
 #include "rif/common/rif_status.h"
 
@@ -72,6 +73,8 @@ typedef struct rif_linkedlist_node_s {
  *
  * @note This structure internal members are private, and may change without notice. They should only be accessed
  *       through the public `rif_linkedlist_t` methods.
+ *
+ * @extends rif_list_t
  */
 typedef struct rif_linkedlist_s {
 
@@ -102,6 +105,13 @@ typedef struct rif_linkedlist_s {
    * Pointer to the last node.
    */
   rif_linkedlist_node_t *last;
+
+  /**
+   * @private
+   *
+   * Memory pool for node allocation.
+   */
+  rif_paged_pool_t pool;
 
 } rif_linkedlist_t;
 

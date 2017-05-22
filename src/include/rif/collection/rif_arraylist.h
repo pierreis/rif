@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,8 @@ extern "C" {
  *
  * @note This structure internal members are private, and may change without notice. They should only be accessed
  *       through the public `rif_arraylist_t` methods.
+ *
+ * @extends rif_list_t
  */
 typedef struct rif_arraylist_s {
 

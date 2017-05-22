@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,10 @@
  */
 
 #include "rif/rif_internal.h"
+
+#include "rif/collection/rif_list.h"
+#include "rif/collection/rif_list_iterator.h"
+#include "rif/util/rif_hash.h"
 
 /******************************************************************************
  * DATA TYPES

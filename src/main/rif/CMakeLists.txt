@@ -14,6 +14,9 @@ set(${PROJECT_NAME}_BASE_OBJECTS
     base/rif_string.c
     base/rif_val.c
 
+    base/rif_paged_pool.c
+    base/rif_paged_pool_hooks.c
+
 )
 
 add_library("${PROJECT_NAME}_base" OBJECT ${${PROJECT_NAME}_BASE_OBJECTS})
@@ -24,6 +27,7 @@ set(${PROJECT_NAME}_COLLECTION_OBJECTS
 
     collection/rif_list.c
     collection/rif_map.c
+    collection/rif_queue.c
 
     collection/rif_arraylist.c
     collection/rif_arraylist_hooks.c
@@ -44,6 +48,23 @@ set(${PROJECT_NAME}_COLLECTION_OBJECTS
 )
 
 add_library("${PROJECT_NAME}_collection" OBJECT ${${PROJECT_NAME}_COLLECTION_OBJECTS})
+
+# Concurrent
+
+set(${PROJECT_NAME}_CONCURRENT_OBJECTS
+
+    concurrent/rif_concurrent_pool.c
+    concurrent/rif_concurrent_pool_hooks.c
+
+    concurrent/collection/rif_concurrent_blocking_queue.c
+    concurrent/collection/rif_concurrent_blocking_queue_hooks.c
+    concurrent/collection/rif_concurrent_queue.c
+    concurrent/collection/rif_concurrent_queue_base.c
+    concurrent/collection/rif_concurrent_queue_hooks.c
+
+)
+
+add_library("${PROJECT_NAME}_concurrent" OBJECT ${${PROJECT_NAME}_CONCURRENT_OBJECTS})
 
 # Util
 
@@ -78,6 +99,7 @@ set(RIF_OBJECTS
 
     $<TARGET_OBJECTS:rif_base>
     $<TARGET_OBJECTS:rif_collection>
+    $<TARGET_OBJECTS:rif_concurrent>
     $<TARGET_OBJECTS:rif_util>
 
 )

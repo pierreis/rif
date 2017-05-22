@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ bool _alloc_filter_new(const char *tag) {
 
 static
 bool _alloc_filter_new_node(const char *tag) {
-  return 0 != strcmp(tag, "RIF_LINKEDLIST_NEW_NODE");
+  return 0 != strcmp(tag, "RIF_POOL_ALLOC");
 }
 
 /******************************************************************************

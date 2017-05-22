@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,31 @@
 
 #pragma once
 
-#include <alloca.h>
-#include <assert.h>
-#include <limits.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#include "../../test_internal.h"
+
+/******************************************************************************
+ * TEST HELPERS
+ */
+
+typedef struct rif_pool_conformity_generator_s {
+  rif_pool_t *(*init)();
+  void (*destroy)(rif_pool_t *);
+} rif_pool_conformity_generator_t;
+
+class PoolConformity : public ::testing::TestWithParam<rif_pool_conformity_generator_s *> {
+
+protected:
+
+    rif_pool_t *pool_ptr;
+
+private:
+
+    virtual void SetUp() {
+      pool_ptr = GetParam()->init();
+    }
+
+    virtual void TearDown() {
+      GetParam()->destroy(pool_ptr);
+    }
+
+};

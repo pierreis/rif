@@ -1,7 +1,7 @@
 /*
  * This file is part of Rif.
  *
- * Copyright 2015 Ironmelt Limited.
+ * Copyright 2017 Ironmelt Limited.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,14 @@
  */
 
 #include "rif/rif_internal.h"
+
+#include "rif/collection/rif_linkedlist.h"
+
+/******************************************************************************
+ * CONFIG
+ */
+
+#define POOL_SIZE 32
 
 /******************************************************************************
  * INTERNAL HELPER FUNCTIONS
@@ -64,6 +72,10 @@ rif_linkedlist_t * rif_linkedlist_build(rif_linkedlist_t *ll_ptr, bool free) {
   ll_ptr->first = NULL;
   ll_ptr->last = NULL;
   ll_ptr->size = 0;
+  if (!rif_paged_pool_init(&ll_ptr->pool, sizeof(rif_linkedlist_node_t), POOL_SIZE, true)) {
+    rif_val_release(ll_ptr);
+    return NULL;
+  }
   return ll_ptr;
 }
 
@@ -85,9 +97,9 @@ void rif_linkedlist_destroy_callback(rif_linkedlist_t *ll_ptr) {
   while (NULL != node_ptr) {
     rif_linkedlist_node_t *next_ptr = node_ptr->succ;
     rif_val_release(node_ptr->val);
-    rif_free(node_ptr);
     node_ptr = next_ptr;
   }
+  rif_paged_pool_destroy(&ll_ptr->pool);
 }
 
 /******************************************************************************
@@ -120,7 +132,7 @@ rif_status_t rif_linkedlist_insert(rif_linkedlist_t *ll_ptr, uint32_t index, rif
   }
 
   // Allocate a new node.
-  rif_linkedlist_node_t *new_node_ptr = rif_malloc(sizeof(rif_linkedlist_node_t), "RIF_LINKEDLIST_NEW_NODE");
+  rif_linkedlist_node_t *new_node_ptr = rif_paged_pool_borrow(&ll_ptr->pool);
   if (NULL == new_node_ptr) {
     return RIF_ERR_MEMORY;
   }
@@ -184,7 +196,7 @@ rif_status_t rif_linkedlist_remove(rif_linkedlist_t *ll_ptr, uint32_t index) {
 
   // Free it.
   rif_val_release(current->val);
-  rif_free(current);
+  rif_paged_pool_return(&ll_ptr->pool, current);
 
   --ll_ptr->size;
   return RIF_OK;
