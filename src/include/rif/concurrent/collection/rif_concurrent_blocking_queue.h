@@ -56,7 +56,7 @@ typedef struct rif_concurrent_blocking_queue_t {
    *
    * Blocking semaphore.
    */
-  sem_t semaphore;
+  rif_sem_t sem;
 
   /**
    * @private

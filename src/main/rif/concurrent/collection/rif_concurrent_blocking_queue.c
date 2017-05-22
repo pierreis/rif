@@ -30,7 +30,7 @@ void _rif_concurrent_blocking_queue_node_add_cb(rif_concurrent_queue_base_t *que
                                                 rif_concurrent_queue_base_node_t *node_ptr, void *udata) {
   rif_concurrent_blocking_queue_t *bqueue_ptr = (rif_concurrent_blocking_queue_t *) udata;
   bqueue_ptr->parent_add(queue_ptr, node_ptr, udata);
-  sem_post(&bqueue_ptr->semaphore);
+  rif_sem_post(&bqueue_ptr->sem);
 }
 
 /******************************************************************************
@@ -41,7 +41,7 @@ rif_concurrent_blocking_queue_t * rif_concurrent_blocking_queue_init(rif_concurr
   if (__unlikely(!rif_concurrent_queue_init((rif_concurrent_queue_t *) queue_ptr))) {
     return NULL;
   }
-  if (__unlikely(0 != sem_init(&queue_ptr->semaphore, 0, 0))) {
+  if (__unlikely(0 != rif_sem_init(&queue_ptr->sem, 0, 0))) {
     rif_val_release(queue_ptr);
     return NULL;
   }
@@ -57,7 +57,7 @@ rif_concurrent_blocking_queue_t * rif_concurrent_blocking_queue_init(rif_concurr
 }
 
 void rif_concurrent_blocking_queue_destroy_callback(rif_concurrent_blocking_queue_t *queue_ptr) {
-  sem_destroy(&queue_ptr->semaphore);
+  rif_sem_destroy(&queue_ptr->sem);
   rif_concurrent_queue_hooks.destroy((rif_queue_t *) queue_ptr);
 }
 
@@ -69,7 +69,7 @@ rif_val_t * rif_concurrent_blocking_queue_pop(rif_concurrent_blocking_queue_t *q
   assert(NULL != queue_ptr);
   rif_val_t *val = NULL;
   while (true) {
-    sem_wait(&queue_ptr->semaphore);
+    rif_sem_wait(&queue_ptr->sem);
     val = rif_concurrent_queue_pop((rif_concurrent_queue_t *) queue_ptr);
     if (val) {
       break;
@@ -80,7 +80,7 @@ rif_val_t * rif_concurrent_blocking_queue_pop(rif_concurrent_blocking_queue_t *q
 
 rif_val_t * rif_concurrent_blocking_queue_trypop(rif_concurrent_blocking_queue_t *queue_ptr) {
   assert(NULL != queue_ptr);
-  if (sem_trywait(&queue_ptr->semaphore)) {
+  if (rif_sem_trywait(&queue_ptr->sem)) {
     return NULL;
   }
   return rif_concurrent_queue_pop((rif_concurrent_queue_t *) queue_ptr);
@@ -91,7 +91,7 @@ rif_val_t * rif_concurrent_blocking_queue_timedpop(rif_concurrent_blocking_queue
   assert(NULL != queue_ptr);
   rif_val_t *val = NULL;
   while (true) {
-    int sem_timedwait_result = sem_timedwait(&queue_ptr->semaphore, abs_timeout);
+    int sem_timedwait_result = rif_sem_timedwait(&queue_ptr->sem, abs_timeout);
     if (-1 == sem_timedwait_result) {
       return NULL;
     }

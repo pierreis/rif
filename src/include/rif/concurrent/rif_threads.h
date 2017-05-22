@@ -41,10 +41,10 @@
 
 #if __APPLE__
 
-typedef dispatch_semaphore_t sem_t;
+typedef dispatch_semaphore_t rif_sem_t;
 
 RIF_INLINE
-int sem_init(sem_t *sem_handle, int pshared, unsigned int value) {
+int rif_sem_init(rif_sem_t *sem_handle, int pshared, unsigned int value) {
   dispatch_semaphore_t sem = dispatch_semaphore_create(value);
   if (!sem) {
     return -1;
@@ -54,13 +54,13 @@ int sem_init(sem_t *sem_handle, int pshared, unsigned int value) {
 }
 
 RIF_INLINE
-int sem_wait(sem_t *sem_handle) {
+int rif_sem_wait(rif_sem_t *sem_handle) {
   long ret = dispatch_semaphore_wait(*sem_handle, DISPATCH_TIME_FOREVER);
   return 0 == ret ? ret : -1;
 }
 
 RIF_INLINE
-int sem_trywait(sem_t *sem_handle) {
+int rif_sem_trywait(rif_sem_t *sem_handle) {
   long ret = dispatch_semaphore_wait(*sem_handle, DISPATCH_TIME_NOW);
   if (0 != ret) {
     errno = EAGAIN;
@@ -70,7 +70,7 @@ int sem_trywait(sem_t *sem_handle) {
 }
 
 RIF_INLINE
-int sem_timedwait(sem_t *sem_handle, const struct timespec *abs_timeout) {
+int rif_sem_timedwait(rif_sem_t *sem_handle, const struct timespec *abs_timeout) {
   long ret = dispatch_semaphore_wait(*sem_handle, dispatch_walltime(abs_timeout, 0));
   if (0 != ret) {
     errno = ETIMEDOUT;
@@ -80,15 +80,49 @@ int sem_timedwait(sem_t *sem_handle, const struct timespec *abs_timeout) {
 }
 
 RIF_INLINE
-int sem_post(sem_t *sem_handle) {
+int rif_sem_post(rif_sem_t *sem_handle) {
   long ret = dispatch_semaphore_signal(*sem_handle);
   return 0 == ret ? ret : -1;
 }
 
 RIF_INLINE
-int sem_destroy(sem_t *sem_handle) {
+int rif_sem_destroy(rif_sem_t *sem_handle) {
   dispatch_release(*sem_handle);
   return 0;
+}
+
+#elif defined(_POSIX_VERSION)
+
+typedef sem_t rif_sem_t;
+
+RIF_INLINE
+int rif_sem_init(rif_sem_t *sem_handle, int pshared, unsigned int value) {
+  return sem_init(sem_handle, pshared, value);
+}
+
+RIF_INLINE
+int rif_sem_wait(rif_sem_t *sem_handle) {
+  return sem_wait(sem_handle);
+}
+
+RIF_INLINE
+int rif_sem_trywait(rif_sem_t *sem_handle) {
+  return sem_trywait(sem_handle);
+}
+
+RIF_INLINE
+int rif_sem_timedwait(rif_sem_t *sem_handle, const struct timespec *abs_timeout) {
+  return sem_timedwait(sem_handle, abs_timeout);
+}
+
+RIF_INLINE
+int rif_sem_post(rif_sem_t *sem_handle) {
+  return sem_post(sem_handle);
+}
+
+RIF_INLINE
+int rif_sem_destroy(rif_sem_t *sem_handle) {
+  return sem_destroy(sem_handle);
 }
 
 #endif
